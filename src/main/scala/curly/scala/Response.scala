@@ -17,6 +17,10 @@ package curly.scala
 
 import scala.collection.JavaConverters._
 
+/**
+ * Response
+ * @param underlying underlying Java instance
+ */
 case class Response(underlying: curly.Response) {
 
   def status(): Int = underlying.getStatus

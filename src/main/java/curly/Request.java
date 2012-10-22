@@ -20,13 +20,27 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Request
+ */
 public class Request {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
-
     public static final String DEFAULT_USER_AGENT = "Curly HTTP Client (https://github.com/m3dev/curly)";
-
     public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+
+    private boolean enableThrowingIOException = false;
+    private String url;
+    private int connectTimeoutMillis = 3000;
+    private int readTimeoutMillis = 10000;
+    private String referer;
+    private String userAgent = DEFAULT_USER_AGENT;
+    private String charset = DEFAULT_CHARSET;
+    private Map<String, String> headers = new HashMap<String, String>();
+    private List<QueryParam> queryParams = new ArrayList<QueryParam>();
+    private RequestBody requestBody = new RequestBody(this);
+    private Map<String, Object> formParams = new HashMap<String, Object>();
+    private List<FormData> multipartFormData = new ArrayList<FormData>();
 
     public Request(String url) {
         setUrl(url);
@@ -69,30 +83,6 @@ public class Request {
 
         return conn;
     }
-
-    private boolean enableThrowingIOException = false;
-
-    private String url;
-
-    private int connectTimeoutMillis = 3000;
-
-    private int readTimeoutMillis = 10000;
-
-    private String referer;
-
-    private String userAgent = DEFAULT_USER_AGENT;
-
-    private String charset = DEFAULT_CHARSET;
-
-    private Map<String, String> headers = new HashMap<String, String>();
-
-    private List<QueryParam> queryParams = new ArrayList<QueryParam>();
-
-    private RequestBody requestBody = new RequestBody(this);
-
-    private Map<String, Object> formParams = new HashMap<String, Object>();
-
-    private List<FormData> multipartFormData = new ArrayList<FormData>();
 
     public boolean isEnableThrowingIOException() {
         return enableThrowingIOException;

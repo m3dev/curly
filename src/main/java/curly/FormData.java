@@ -17,7 +17,15 @@ package curly;
 
 import java.io.*;
 
+/**
+ * Multipart form data
+ */
 public class FormData {
+
+    private String name;
+    private String contentType;
+    private byte[] body;
+    private File file;
 
     public FormData() {
     }
@@ -31,31 +39,9 @@ public class FormData {
         setBody(body);
     }
 
-    public static class TextInput {
-
-        public TextInput(String textBody, String charset) {
-            this.textBody = textBody;
-            this.charset = charset;
-        }
-
-        private String textBody;
-        private String charset;
-    }
-
     public FormData(String name, TextInput input) throws UnsupportedEncodingException {
         setName(name);
         setTextBody(input.textBody, input.charset);
-    }
-
-    public static class FileInput {
-
-        public FileInput(File file, String contentType) {
-            this.file = file;
-            this.contentType = contentType;
-        }
-
-        private File file;
-        private String contentType;
     }
 
     public FormData(String name, FileInput input) {
@@ -63,14 +49,6 @@ public class FormData {
         setFile(input.file);
         setContentType(input.contentType);
     }
-
-    private String name;
-
-    private String contentType;
-
-    private File file;
-
-    private byte[] body;
 
     public String getName() {
         return name;
@@ -120,6 +98,34 @@ public class FormData {
 
     public void setTextBody(String textBody, String charset) throws UnsupportedEncodingException {
         this.body = textBody.getBytes(charset);
+    }
+
+    /**
+     * Form data from a text value
+     */
+    public static class TextInput {
+
+        public TextInput(String textBody, String charset) {
+            this.textBody = textBody;
+            this.charset = charset;
+        }
+
+        private String textBody;
+        private String charset;
+    }
+
+    /**
+     * Form data from a local file
+     */
+    public static class FileInput {
+
+        public FileInput(File file, String contentType) {
+            this.file = file;
+            this.contentType = contentType;
+        }
+
+        private File file;
+        private String contentType;
     }
 
 }

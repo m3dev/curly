@@ -26,12 +26,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
 
 ```groovy
 @Grab('com.m3:curly:0.4.0-SNAPSHOT')
-
-import curly.*;
-response = HTTP.get(new Request("http://example.com"));
-println(response.getTextBody());
 ```
-
 
 ## Usage
 
@@ -41,37 +36,41 @@ GET:
 
 ```scala
 import curly.scala._
-val response = HTTP.get("http://search.example.com").queryParams("query" -> "Application", "lang" -> "Scala")
 
-scala> val status = response.status
-status: Int = 200
+val response: Response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
 
-scala> val headers = response.headers
-headers: Map[String,String] = Map(null -> HTTP/1.1 200 OK, ETag -> "2800e-1b46-4c7d1dcaf9817", Date -> Wed, 17 Oct 2012 15:03:39 GMT, Content-Length -> 6982, Last-Modified -> Wed, 22 Aug 2012 02:54:31 GMT, Content-Type -> text/html; charset=UTF-8, Connection -> close, Accept-Ranges -> bytes, Server -> Apache/2.2.22 (Amazon))
+val response: Response = HTTP.get("http://search.example.com")
+  .queryParams("query" -> "Application", "lang" -> "Scala")
 
-scala> val html = response.asString
-html: java.lang.String = "<!DOCTYPE html PUBLIC "-//W3C//DTD ...
-
-scala> val bin = response.asBytes
-bin: Array[Byte] = Array(60, 33, 68, 79, 67, ...
+val status: Int = response.status
+val headers: Map[String, String] = response.headers
+val headerFields: Map[String, Seq[String]] = response.headerFields
+val rawCookies: Map[String, String] = response.rawCookies
+val html: String = response.asString # or response.textBody
+val bin: Array[Byte] = response.asBytes # or response.body
 ```
 
 POST/PUT:
 
 ```scala
-val response = HTTP.post("http://example.com/register", "aa=bb&ccc=123")
+val response: Response = HTTP.post("http://example.com/register", "aa=bb&ccc=123")
 
-val response = HTTP.post("http://example.com/register", Map("aaa" -> "bb", "ccc" -> 123))
+val response: Response = HTTP.post("http://example.com/register", Map("aaa" -> "bb", "ccc" -> 123))
 
-val response = HTTP.post("http://example.com/register",
-  FormData(name = "description", text = TextInput("My profile image")),
-  FormData(name = "img1.png", file = FileInput(new java.io.File("./img1.png"), "image/png")))
+val response: Response = HTTP.post("http://example.com/register",
+  FormData(name = "name", text = TextInput("Andy", "UTF-8")),
+  FormData(name = "image", file = FileInput(new java.io.File("./myface.jpg"), "myface.jpg"), "image/jpeg"))
+  // or FormData(name = "bin", bytes = Array[Byte](1,2,3))
 ```
 
 DELETE/OPTIONS/HEAD/TRACE:
 
-Same as Java/Groovy Usage.
-
+```scala
+val response: Response = HTTP.delete("http://example.com/users/123")
+val response: Response = HTTP.options("http://example.com/")
+val response: Response = HTTP.head("http://example.com/")
+val response: Response = HTTP.trace("http://example.com/")
+```
 
 ## Java/Groovy Usage
 

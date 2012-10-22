@@ -17,6 +17,10 @@ package curly.scala
 
 import scala.collection.JavaConverters._
 
+/**
+ * Request
+ * @param url url
+ */
 case class Request(url: String) {
 
   val underlying = new curly.Request(url)

@@ -17,12 +17,14 @@ package curly;
 
 import java.io.IOException;
 
+/**
+ * HTTP IOException
+ */
 public class HTTPIOException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
     private String message;
-
     private Response response;
 
     public HTTPIOException(String message, Response response) {

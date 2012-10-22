@@ -19,6 +19,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Request body
+ */
 public class RequestBody {
 
     private static final String CRLF = "\r\n";
@@ -106,7 +109,7 @@ public class RequestBody {
             return os.toByteArray();
 
         } finally {
-            IO.close(os);
+            IOUtil.closeSafely(os);
         }
     }
 

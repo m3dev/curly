@@ -23,15 +23,10 @@ import java.util.Map;
 public class Response {
 
     private int status = -1;
-
     private Map<String, String> headers = new HashMap<String, String>();
-
     private Map<String, List<String>> headerFields = new HashMap<String, List<String>>();
-
     private Map<String, String> rawCookies = new HashMap<String, String>();
-
     private String charset;
-
     private byte[] body;
 
     public int getStatus() {

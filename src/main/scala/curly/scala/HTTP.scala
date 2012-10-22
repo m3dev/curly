@@ -17,7 +17,13 @@ package curly.scala
 
 import curly.{ HTTP => JavaHTTP }
 
+/**
+ * HTTP
+ */
 object HTTP {
+
+  // -----
+  // GET
 
   def get(req: Request): Response = Response(JavaHTTP.get(req.asJava))
 
@@ -28,6 +34,9 @@ object HTTP {
   def get(url: String, queryParams: (String, Any)*): Response = {
     Response(JavaHTTP.get(Request(url).queryParams(queryParams: _*).asJava))
   }
+
+  // -----
+  // POST
 
   def post(req: Request): Response = Response(JavaHTTP.post(req.asJava))
 
@@ -43,6 +52,9 @@ object HTTP {
     Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava))
   }
 
+  // -----
+  // PUT
+
   def put(req: Request): Response = Response(JavaHTTP.put(req.asJava))
 
   def put(url: String, data: String): Response = {
@@ -54,16 +66,39 @@ object HTTP {
   }
 
   def put(url: String, multipartFormData: (FormData)*): Response = {
-    Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava))
+    Response(JavaHTTP.put(Request(url).multipartFormData(multipartFormData.toList).asJava))
   }
+
+  // -----
+  // DELETE
 
   def delete(req: Request): Response = Response(JavaHTTP.delete(req.asJava))
 
+  def delete(url: String): Response = Response(JavaHTTP.delete(Request(url).asJava))
+
+  // -----
+  // HEAD
+
   def head(req: Request): Response = Response(JavaHTTP.head(req.asJava))
+
+  def head(url: String): Response = Response(JavaHTTP.head(Request(url).asJava))
+
+  // -----
+  // OPTIONS
 
   def options(req: Request): Response = Response(JavaHTTP.options(req.asJava))
 
+  def options(url: String): Response = Response(JavaHTTP.options(Request(url).asJava))
+
+  // -----
+  // TRACE
+
   def trace(req: Request): Response = Response(JavaHTTP.trace(req.asJava))
+
+  def trace(url: String): Response = Response(JavaHTTP.trace(Request(url).asJava))
+
+  // -----
+  // General request
 
   def request(method: Method, req: Request): Response = Response(JavaHTTP.request(method, req.asJava))
 

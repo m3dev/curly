@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * HTTP
+ */
 public class HTTP {
 
     private HTTP() {
@@ -74,7 +77,7 @@ public class HTTP {
                 try {
                     os.write(request.getBytes());
                 } finally {
-                    IO.close(os);
+                    IOUtil.closeSafely(os);
                 }
             } else if (request.getFormParams() != null && request.getFormParams().size() > 0) {
                 conn.setDoOutput(true);
@@ -84,7 +87,7 @@ public class HTTP {
                 try {
                     os.write(body);
                 } finally {
-                    IO.close(os);
+                    IOUtil.closeSafely(os);
                 }
             } else if (request.getMultipartFormData() != null && request.getMultipartFormData().size() > 0) {
                 conn.setDoOutput(true);
@@ -95,7 +98,7 @@ public class HTTP {
                 try {
                     os.write(body);
                 } finally {
-                    IO.close(os);
+                    IOUtil.closeSafely(os);
                 }
             }
 
@@ -123,29 +126,27 @@ public class HTTP {
         }
         response.setHeaders(headers);
 
-        Map<String, String> cookies = new HashMap<String, String>();
         List<String> cookieFields = conn.getHeaderFields().get("Set-Cookie");
         if (cookieFields != null) {
             for (String cookieField : cookieFields) {
-                String[] splitted = cookieField.split("=");
-                if (splitted.length > 0) {
-                    String name = splitted[0];
-                    cookies.put(name, cookieField);
+                String[] tmpArray = cookieField.split("=");
+                if (tmpArray.length > 0) {
+                    String name = tmpArray[0];
+                    response.getRawCookies().put(name, cookieField);
                 }
             }
         }
-        response.setRawCookies(cookies);
 
         if (stream != null) {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
             try {
                 int c;
                 while ((c = stream.read()) != -1) {
-                    os.write(c);
+                    output.write(c);
                 }
-                response.setBody(os.toByteArray());
+                response.setBody(output.toByteArray());
             } finally {
-                IO.close(os);
+                IOUtil.closeSafely(output);
             }
         }
 
@@ -161,12 +162,12 @@ public class HTTP {
 
     }
 
-    static String urlEncode(String rawValue) {
+    public static String urlEncode(String rawValue) {
         try {
             return URLEncoder.encode(rawValue, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException unexpected) {
+            throw new IllegalStateException(unexpected.getMessage(), unexpected);
         }
-        return rawValue;
     }
 
 }

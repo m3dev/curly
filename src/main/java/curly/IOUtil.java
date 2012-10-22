@@ -20,9 +20,12 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-public class IO {
+/**
+ * IO Utility
+ */
+public class IOUtil {
 
-    public static void close(InputStream is) {
+    public static void closeSafely(InputStream is) {
         if (is != null) {
             try {
                 is.close();
@@ -31,7 +34,7 @@ public class IO {
         }
     }
 
-    public static void close(OutputStream os) {
+    public static void closeSafely(OutputStream os) {
         if (os != null) {
             try {
                 os.close();
@@ -40,7 +43,7 @@ public class IO {
         }
     }
 
-    public static void close(Reader reader) {
+    public static void closeSafely(Reader reader) {
         if (reader != null) {
             try {
                 reader.close();
@@ -49,7 +52,7 @@ public class IO {
         }
     }
 
-    public static void close(Writer writer) {
+    public static void closeSafely(Writer writer) {
         if (writer != null) {
             try {
                 writer.close();

@@ -15,6 +15,13 @@
  */
 package curly.scala
 
+/**
+ * Form data
+ * @param name name
+ * @param bytes body as a byte array
+ * @param text body from a text value
+ * @param file body from a file
+ */
 case class FormData(name: String, bytes: Array[Byte] = null, text: TextInput = NoTextInput, file: FileInput = NoFileInput)
     extends curly.FormData {
 
@@ -47,10 +54,26 @@ case class FormData(name: String, bytes: Array[Byte] = null, text: TextInput = N
 
 }
 
+/**
+ * Body from a text value
+ * @param textBody text
+ * @param charset charset
+ */
 case class TextInput(textBody: String, charset: String = "UTF-8") extends curly.FormData.TextInput(textBody, charset)
 
+/**
+ * No text input
+ */
 object NoTextInput extends TextInput(null, null)
 
+/**
+ * Body from a file
+ * @param file file
+ * @param contentType content type
+ */
 case class FileInput(file: java.io.File, contentType: String) extends curly.FormData.FileInput(file, contentType)
 
+/**
+ * No file input
+ */
 object NoFileInput extends FileInput(null, null)

@@ -15,6 +15,10 @@
  */
 package curly.scala
 
+/**
+ * Request body
+ * @param underlying underlying Java instance
+ */
 case class RequestBody(underlying: curly.RequestBody) {
 
   def bytes(): Array[Byte] = underlying.getBytes

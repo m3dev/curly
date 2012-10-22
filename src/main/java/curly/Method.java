@@ -17,6 +17,14 @@ package curly;
 
 public class Method {
 
+    public static final Method GET = new Method("GET");
+    public static final Method HEAD = new Method("HEAD");
+    public static final Method POST = new Method("POST");
+    public static final Method PUT = new Method("PUT");
+    public static final Method DELETE = new Method("DELETE");
+    public static final Method OPTIONS = new Method("OPTIONS");
+    public static final Method TRACE = new Method("TRACE");
+
     private String methodName;
 
     public Method(String methodName) {
@@ -32,13 +40,5 @@ public class Method {
     public String toString() {
         return this.methodName;
     }
-
-    public static Method GET = new Method("GET");
-    public static Method HEAD = new Method("HEAD");
-    public static Method POST = new Method("POST");
-    public static Method PUT = new Method("PUT");
-    public static Method DELETE = new Method("DELETE");
-    public static Method OPTIONS = new Method("OPTIONS");
-    public static Method TRACE = new Method("TRACE");
 
 }

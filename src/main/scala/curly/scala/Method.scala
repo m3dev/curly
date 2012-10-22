@@ -15,7 +15,11 @@
  */
 package curly.scala
 
-case class Method(methodName: String) extends curly.Method(methodName)
+/**
+ * HTTP/1.1 Method
+ * @param name name
+ */
+case class Method(name: String) extends curly.Method(name)
 
 object Method {
 

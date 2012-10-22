@@ -15,16 +15,18 @@
  */
 package curly;
 
+/**
+ * Query param
+ */
 public class QueryParam {
+
+    private String name;
+    private Object value;
 
     public QueryParam(String name, Object value) {
         setName(name);
         setValue(value);
     }
-
-    private String name;
-
-    private Object value;
 
     public String getName() {
         return name;
