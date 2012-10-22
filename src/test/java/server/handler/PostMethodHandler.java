@@ -1,6 +1,6 @@
 package server.handler;
 
-import curly.Method;
+import com.m3.curly.Method;
 import org.eclipse.jetty.server.Request;
 
 import javax.servlet.http.HttpServletRequest;

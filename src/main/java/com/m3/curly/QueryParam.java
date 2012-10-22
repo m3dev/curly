@@ -13,26 +13,34 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly;
 
 /**
- * Request body
- * @param underlying underlying Java instance
+ * Query param
  */
-case class RequestBody(underlying: curly.RequestBody) {
+public class QueryParam {
 
-  def bytes(): Array[Byte] = underlying.getBytes
+    private String name;
+    private Object value;
 
-  def contentType(): String = underlying.getContentType
+    public QueryParam(String name, Object value) {
+        setName(name);
+        setValue(value);
+    }
 
-  def body(body: Array[Byte], contentType: String): RequestBody = {
-    underlying.setBody(body, contentType)
-    this
-  }
+    public String getName() {
+        return name;
+    }
 
-  def contentType(contentType: String): RequestBody = {
-    underlying.setContentType(contentType)
-    this
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

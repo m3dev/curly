@@ -1,8 +1,7 @@
-package curly;
+package com.m3.curly;
 
-import curly.*;
-import curly.FormData.FileInput;
-import curly.FormData.TextInput;
+import com.m3.curly.FormData.FileInput;
+import com.m3.curly.FormData.TextInput;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Test;
 import server.HttpServer;
@@ -40,7 +39,7 @@ public class HTTPTest {
 
     @Test
     public void type() throws Exception {
-        assertThat(curly.HTTP.class, notNullValue());
+        assertThat(com.m3.curly.HTTP.class, notNullValue());
     }
 
     @Test
@@ -51,8 +50,8 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response response = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getHeaderFields().size(), is(greaterThan(0)));
             assertThat(response.getTextBody(), is("おｋ"));
@@ -70,13 +69,13 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/?foo=var");
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/?foo=var");
             request.addQueryParam("toReturn", "日本語");
 
-            String url = request.toHttpURLConnection(curly.Method.GET).getURL().toString();
+            String url = request.toHttpURLConnection(com.m3.curly.Method.GET).getURL().toString();
             assertThat(url, is(equalTo("http://localhost:8888/?foo=var&toReturn=%E6%97%A5%E6%9C%AC%E8%AA%9E")));
 
-            curly.Response response = curly.HTTP.get(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getHeaderFields().size(), is(greaterThan(0)));
             assertThat(response.getTextBody(), is("日本語"));
@@ -88,49 +87,49 @@ public class HTTPTest {
 
     @Test
     public void get_A$Request_text() throws Exception {
-        curly.Request request = new curly.Request("http://seratch.net/");
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/");
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(200));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
 
     @Test
     public void get_A$Request_text_charset() throws Exception {
-        curly.Request request = new curly.Request("http://seratch.net/", "EUC-JP");
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/", "EUC-JP");
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(200));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
 
     @Test
     public void get_A$Request_text_404() throws Exception {
-        curly.Request request = new curly.Request("http://seratch.net/sss");
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/sss");
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(404));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
 
     @Test(expected = HTTPIOException.class)
     public void get_A$Request_text_404_exception() throws Exception {
-        curly.Request request = new curly.Request("http://seratch.net/sss");
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/sss");
         request.setEnableThrowingIOException(true);
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(404));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
 
     @Test
     public void get_A$Request_text_via_SSL() throws Exception {
-        curly.Request request = new curly.Request("https://github.com/seratch");
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("https://github.com/seratch");
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(200));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
 
     @Test
     public void get_A$Request_jpg() throws Exception {
-        curly.Request request = new curly.Request("http://seratch.net/images/self_face.jpg");
-        curly.Response response = curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/images/self_face.jpg");
+        com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
         assertThat(response.getStatus(), is(200));
         FileOutputStream os = new FileOutputStream("target/self_face.jpg");
         os.write(response.getBody());
@@ -139,16 +138,16 @@ public class HTTPTest {
 
     @Test(expected = MalformedURLException.class)
     public void get_A$Request_protocol_error() throws Exception {
-        curly.Request request = new curly.Request("ttp://seratch.net/");
-        curly.HTTP.get(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("ttp://seratch.net/");
+        com.m3.curly.HTTP.get(request);
     }
 
     @Test
     public void post_A$Request_ext() throws Exception {
         Map<String, Object> formParams = new HashMap<String, Object>();
         formParams.put("name", "Andy");
-        curly.Request request = new curly.Request("http://seratch.net/", formParams);
-        curly.Response response = curly.HTTP.post(request);
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/", formParams);
+        com.m3.curly.Response response = com.m3.curly.HTTP.post(request);
         assertThat(response.getStatus(), is(200));
     }
 
@@ -162,8 +161,8 @@ public class HTTPTest {
 
             Map<String, Object> formParams = new HashMap<String, Object>();
             formParams.put("userName", "日本語");
-            curly.Request request = new curly.Request("http://localhost:8888/", formParams);
-            curly.Response response = curly.HTTP.post(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/", formParams);
+            com.m3.curly.Response response = com.m3.curly.HTTP.post(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("userName:日本語"));
         } finally {
@@ -180,15 +179,15 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            List<curly.FormData> formDataList = new ArrayList<curly.FormData>();
-            curly.FormData entry1 = new curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
             entry1.setContentType("text/plain");
             formDataList.add(entry1);
-            curly.FormData entry2 = new curly.FormData("formData2", new TextInput("2222", "UTF-8"));
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("formData2", new TextInput("2222", "UTF-8"));
             formDataList.add(entry2);
             request.setMultipartFormData(formDataList);
-            curly.Response response = curly.HTTP.post(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.post(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("日本語"));
         } finally {
@@ -205,15 +204,15 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            List<curly.FormData> multipart = new ArrayList<curly.FormData>();
-            curly.FormData entry1 = new curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            List<com.m3.curly.FormData> multipart = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
             entry1.setTextBody("日本語", "UTF-8");
             multipart.add(entry1);
-            curly.FormData entry2 = new curly.FormData("gitignore", new FileInput(new File(".gitignore"), "text/plain"));
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("gitignore", new FileInput(new File(".gitignore"), "text/plain"));
             multipart.add(entry2);
             request.setMultipartFormData(multipart);
-            curly.Response response = curly.HTTP.post(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.post(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("日本語"));
         } finally {
@@ -230,12 +229,12 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response getResponse = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
             request.setBody("<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
-            curly.Response response = curly.HTTP.put(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.put(request);
             assertThat(response.getStatus(), is(201));
             assertThat(response.getTextBody(), is(""));
         } finally {
@@ -252,11 +251,11 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response getResponse = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
-            curly.Response response = curly.HTTP.delete(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.delete(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("おｋ"));
         } finally {
@@ -273,11 +272,11 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response getResponse = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
-            curly.Response response = curly.HTTP.head(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.head(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is(""));
         } finally {
@@ -294,11 +293,11 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response getResponse = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
-            curly.Response response = curly.HTTP.options(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.options(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getHeaderFields().get("Allow").toString(), is("[GET, HEAD, OPTIONS, TRACE]"));
             assertThat(response.getTextBody(), is("おｋ"));
@@ -316,11 +315,11 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
-            curly.Response getResponse = curly.HTTP.get(request);
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
-            curly.Response response = curly.HTTP.trace(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.trace(request);
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("おｋ"));
         } finally {
@@ -331,18 +330,18 @@ public class HTTPTest {
 
     @Test
     public void request_A$HttpMethod$Request() throws Exception {
-        curly.Method method = curly.Method.GET;
-        curly.Request request = new curly.Request("http://seratch.net/");
-        curly.Response response = curly.HTTP.request(method, request);
+        com.m3.curly.Method method = com.m3.curly.Method.GET;
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/");
+        com.m3.curly.Response response = com.m3.curly.HTTP.request(method, request);
         assertThat(response.getStatus(), is(200));
     }
 
     @Test
     public void request_A$HttpMethod$Request_HeaderInjection() throws Exception {
-        curly.Method method = Method.GET;
-        curly.Request request = new curly.Request("http://seratch.net/");
+        com.m3.curly.Method method = Method.GET;
+        com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/");
         request.setHeader("H1", "dummy\n H2: evil");
-        curly.Response response = curly.HTTP.request(method, request);
+        com.m3.curly.Response response = com.m3.curly.HTTP.request(method, request);
         assertThat(response.getStatus(), is(200));
     }
 
@@ -369,9 +368,9 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
             request.setHeader("H1", "dummy\n H2: evil");
-            curly.Response response = curly.HTTP.get(request);
+            com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
             assertThat(response.getStatus(), is(200));
         } finally {
             server.stop();
@@ -403,9 +402,9 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new curly.Request("http://localhost:8888/");
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
             request.setHeader("H1", "dummy\nH2: evil");
-            curly.HTTP.get(request);
+            com.m3.curly.HTTP.get(request);
             // java.lang.IllegalArgumentException: Illegal character(s) in
             // message header value: dummy
             // H2: evil
@@ -441,9 +440,9 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            curly.Request request = new Request("http://localhost:8888/");
+            com.m3.curly.Request request = new Request("http://localhost:8888/");
             request.addQueryParam("k", "v\nH2: evil");
-            Response response = curly.HTTP.get(request);
+            Response response = com.m3.curly.HTTP.get(request);
             assertThat(response.getStatus(), is(200));
         } finally {
             server.stop();

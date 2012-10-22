@@ -13,13 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly.scala
 
 /**
  * HTTP/1.1 Method
  * @param name name
  */
-case class Method(name: String) extends curly.Method(name)
+case class Method(name: String) extends com.m3.curly.Method(name)
 
 object Method {
 

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly;
+package com.m3.curly;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -26,7 +26,7 @@ import java.util.*;
 public class Request {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
-    public static final String DEFAULT_USER_AGENT = "Curly HTTP Client (https://github.com/m3dev/curly)";
+    public static final String DEFAULT_USER_AGENT = "Curly HTTP Client (https://github.com/m3dev/com.m3.curly)";
     public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
     private boolean enableThrowingIOException = false;

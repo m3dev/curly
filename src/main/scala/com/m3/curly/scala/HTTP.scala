@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly.scala
 
-import curly.{ HTTP => JavaHTTP }
+import com.m3.curly.{ HTTP => JavaHTTP }
 
 /**
  * HTTP
@@ -27,7 +27,7 @@ object HTTP {
 
   def get(req: Request): Response = Response(JavaHTTP.get(req.asJava))
 
-  def get(url: String, charset: String = curly.Request.DEFAULT_CHARSET): Response = {
+  def get(url: String, charset: String = com.m3.curly.Request.DEFAULT_CHARSET): Response = {
     Response(JavaHTTP.get(Request(url).charset(charset).asJava))
   }
 

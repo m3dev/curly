@@ -35,7 +35,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
 GET:
 
 ```scala
-import curly.scala._
+import com.m3.curly.scala._
 
 val response: Response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
 
@@ -79,7 +79,7 @@ val response: Response = HTTP.trace("http://example.com/")
 The following code is an example of sending a GET request.
 
 ```java
-import curly.*;
+import com.m3.curly.*;
 Request request = new Request("http://example.com/");
 Response response = HTTP.get(request);
 
@@ -191,12 +191,12 @@ Response response = HTTP.trace(request);
 
 response.getTextBody();
 // TRACE / HTTP/1.1
-// User-Agent: Curly HTTP Client (https://github.com/m3dev/curly)
+// User-Agent: Curly HTTP Client (https://github.com/m3dev/com.m3.curly)
 // Accept-Charset: UTF-8
 // Host: example.com
 // Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
 // Connection: keep-alive
-// 
+//
 ```
 
 ## Developers

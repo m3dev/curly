@@ -1,7 +1,7 @@
 package benchmark;
 
-import curly.HTTP;
-import curly.Request;
+import com.m3.curly.HTTP;
+import com.m3.curly.Request;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -46,7 +46,7 @@ public class SimpleGetBenchmarkTest {
                 }
                 long endTime = System.currentTimeMillis();
                 long millis = endTime - startTime - 10 * timesToCall;
-                System.out.println("curly 300 GET req : " + millis + " milliseconds");
+                System.out.println("com.m3.curly 300 GET req : " + millis + " milliseconds");
                 Thread.sleep(300L);
             }
 
@@ -105,7 +105,7 @@ public class SimpleGetBenchmarkTest {
                 }
                 long endTime = System.currentTimeMillis();
                 long millis = endTime - startTime - 10 * timesToCall;
-                System.out.println("curly 300 GET req : " + millis + " milliseconds");
+                System.out.println("com.m3.curly 300 GET req : " + millis + " milliseconds");
                 Thread.sleep(300L);
             }
 

@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly.scala
 
 /**
  * Form data
@@ -23,7 +23,7 @@ package curly.scala
  * @param file body from a file
  */
 case class FormData(name: String, bytes: Array[Byte] = null, text: TextInput = NoTextInput, file: FileInput = NoFileInput)
-    extends curly.FormData {
+    extends com.m3.curly.FormData {
 
   setName(name)
 
@@ -59,7 +59,7 @@ case class FormData(name: String, bytes: Array[Byte] = null, text: TextInput = N
  * @param textBody text
  * @param charset charset
  */
-case class TextInput(textBody: String, charset: String = "UTF-8") extends curly.FormData.TextInput(textBody, charset)
+case class TextInput(textBody: String, charset: String = "UTF-8") extends com.m3.curly.FormData.TextInput(textBody, charset)
 
 /**
  * No text input
@@ -71,7 +71,7 @@ object NoTextInput extends TextInput(null, null)
  * @param file file
  * @param contentType content type
  */
-case class FileInput(file: java.io.File, contentType: String) extends curly.FormData.FileInput(file, contentType)
+case class FileInput(file: java.io.File, contentType: String) extends com.m3.curly.FormData.FileInput(file, contentType)
 
 /**
  * No file input

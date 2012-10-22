@@ -1,6 +1,6 @@
 package server.handler;
 
-import curly.Method;
+import com.m3.curly.Method;
 
 public class GetMethodHandler extends MethodHandler {
 

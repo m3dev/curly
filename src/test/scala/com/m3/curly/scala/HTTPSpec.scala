@@ -1,4 +1,4 @@
-package curly.scala
+package com.m3.curly.scala
 
 import org.specs2.mutable.Specification
 import org.eclipse.jetty.server.Server
@@ -11,102 +11,102 @@ class HTTPSpec extends Specification {
   "HTTP" should {
 
     "get" in {
-      val server = new org.eclipse.jetty.server.Server(8877)
+      val server = new org.eclipse.jetty.server.Server(8077)
       try {
         server.setHandler(getHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get("http://localhost:8877/?foo=bar")
+        val response = HTTP.get("http://localhost:8077/?foo=bar")
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "get with queryParams" in {
-      val server = new org.eclipse.jetty.server.Server(8877)
+      val server = new org.eclipse.jetty.server.Server(8177)
       try {
         server.setHandler(getHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get("http://localhost:8877/", "foo" -> "bar")
+        val response = HTTP.get("http://localhost:8177/", "foo" -> "bar")
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "get using queryParams method" in {
-      val server = new org.eclipse.jetty.server.Server(8877)
+      val server = new org.eclipse.jetty.server.Server(8277)
       try {
         server.setHandler(getHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get(Request("http://localhost:8877/").queryParams("foo" -> "bar"))
+        val response = HTTP.get(Request("http://localhost:8277/").queryParams("foo" -> "bar"))
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "get with charset" in {
-      val server = new org.eclipse.jetty.server.Server(8877)
+      val server = new org.eclipse.jetty.server.Server(8377)
       try {
         server.setHandler(getHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get("http://localhost:8877/?foo=bar", "UTF-8")
+        val response = HTTP.get("http://localhost:8377/?foo=bar", "UTF-8")
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "post with data string" in {
-      val server = new org.eclipse.jetty.server.Server(8887)
+      val server = new org.eclipse.jetty.server.Server(8187)
       try {
         server.setHandler(postHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.post("http://localhost:8887/", "foo=bar")
+        val response = HTTP.post("http://localhost:8187/", "foo=bar")
         response.status must equalTo(200)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "post with Map" in {
-      val server = new org.eclipse.jetty.server.Server(8897)
+      val server = new org.eclipse.jetty.server.Server(8287)
       try {
         server.setHandler(postHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.post("http://localhost:8897/", Map("foo" -> "bar"))
+        val response = HTTP.post("http://localhost:8287/", Map("foo" -> "bar"))
         response.status must equalTo(200)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
@@ -125,61 +125,41 @@ class HTTPSpec extends Specification {
         response.asString must equalTo("bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "put with data string" in {
-      val server = new org.eclipse.jetty.server.Server(8886)
+      val server = new org.eclipse.jetty.server.Server(8186)
       try {
         server.setHandler(putHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.put("http://localhost:8886/", "foo=bar")
+        val response = HTTP.put("http://localhost:8186/", "foo=bar")
         response.status must equalTo(200)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
+        Thread.sleep(300L)
       }
     }
 
     "put with data Map" in {
-      val server = new org.eclipse.jetty.server.Server(8896)
+      val server = new org.eclipse.jetty.server.Server(8286)
       try {
         server.setHandler(putHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.put("http://localhost:8896/", Map("foo" -> "bar"))
+        val response = HTTP.put("http://localhost:8286/", Map("foo" -> "bar"))
         response.status must equalTo(200)
         response.asString must equalTo("foo:bar")
       } finally {
         server.stop
-        Thread.sleep(100L)
-      }
-    }
-
-    "put with TextInput" in {
-      val server = new _root_.server.PostFormdataServer
-      try {
-        new Thread(new Runnable() {
-          def run() {
-            server.start()
-          }
-        }).start()
         Thread.sleep(300L)
-
-        val response = HTTP.put("http://localhost:8888/", FormData(name = "toResponse", text = TextInput("bar")))
-        response.status must equalTo(200)
-        response.asString must equalTo("bar")
-      } finally {
-        server.stop
-        Thread.sleep(100L)
       }
     }
-
   }
 
   def runnable(server: Server) = {

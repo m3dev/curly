@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly.scala
 
 import scala.collection.JavaConverters._
 
@@ -23,9 +23,9 @@ import scala.collection.JavaConverters._
  */
 case class Request(url: String) {
 
-  val underlying = new curly.Request(url)
+  val underlying = new com.m3.curly.Request(url)
 
-  def asJava: curly.Request = underlying
+  def asJava: com.m3.curly.Request = underlying
 
   def enableThrowingIOException(enabled: Boolean): Request = {
     underlying.setEnableThrowingIOException(enabled)
@@ -87,14 +87,14 @@ case class Request(url: String) {
 
   def queryParams(queryParams: (String, Any)*): Request = {
     underlying.setQueryParams(queryParams.map {
-      case (k, v) => new curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
+      case (k, v) => new com.m3.curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
     }.asJava)
     this
   }
 
   def requestBody(): RequestBody = RequestBody(underlying.getRequestBody)
 
-  def body(body: Array[Byte], contentType: String = curly.Request.X_WWW_FORM_URLENCODED): Request = {
+  def body(body: Array[Byte], contentType: String = com.m3.curly.Request.X_WWW_FORM_URLENCODED): Request = {
     underlying.setBody(body, contentType)
     this
   }
@@ -121,14 +121,14 @@ case class Request(url: String) {
   }
 
   def multipartFormData(): List[FormData] = {
-    underlying.getMultipartFormData.asScala.map { j: curly.FormData =>
+    underlying.getMultipartFormData.asScala.map { j: com.m3.curly.FormData =>
       FormData(name = j.getName, bytes = j.getBody)
     }.toList
   }
 
   def multipartFormData(formData: List[FormData]): Request = {
     underlying.setMultipartFormData(
-      formData.map(f => f.asInstanceOf[curly.FormData]).asJava
+      formData.map(f => f.asInstanceOf[com.m3.curly.FormData]).asJava
     )
     this
   }

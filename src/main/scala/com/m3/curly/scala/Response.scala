@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package curly.scala
+package com.m3.curly.scala
 
 import scala.collection.JavaConverters._
 
@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
  * Response
  * @param underlying underlying Java instance
  */
-case class Response(underlying: curly.Response) {
+case class Response(underlying: com.m3.curly.Response) {
 
   def status(): Int = underlying.getStatus
 
