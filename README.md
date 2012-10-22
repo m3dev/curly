@@ -41,7 +41,7 @@ GET:
 
 ```scala
 import curly.scala._
-val response = HTTP.get("http://example.com")
+val response = HTTP.get("http://search.example.com").queryParams("query" -> "Application", "lang" -> "Scala")
 
 scala> val status = response.status
 status: Int = 200
@@ -61,7 +61,11 @@ POST/PUT:
 ```scala
 val response = HTTP.post("http://example.com/register", "aa=bb&ccc=123")
 
-val response = HTTP.post("http://example.com/register", "aaa" -> "bb", "ccc" -> 123)
+val response = HTTP.post("http://example.com/register", Map("aaa" -> "bb", "ccc" -> 123))
+
+val response = HTTP.post("http://example.com/register",
+  FormData(name = "description", text = TextInput("My profile image")),
+  FormData(name = "img1.png", file = FileInput(new java.io.File("./img1.png"), "image/png")))
 ```
 
 DELETE/OPTIONS/HEAD/TRACE:
