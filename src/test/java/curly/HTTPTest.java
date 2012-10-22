@@ -71,9 +71,7 @@ public class HTTPTest {
             Thread.sleep(100L);
 
             curly.Request request = new curly.Request("http://localhost:8888/?foo=var");
-            Map<String, Object> queryParams = new HashMap<String, Object>();
-            queryParams.put("toReturn", "日本語");
-            request.setQueryParams(queryParams);
+            request.addQueryParam("toReturn", "日本語");
 
             String url = request.toHttpURLConnection(curly.Method.GET).getURL().toString();
             assertThat(url, is(equalTo("http://localhost:8888/?foo=var&toReturn=%E6%97%A5%E6%9C%AC%E8%AA%9E")));
@@ -444,9 +442,7 @@ public class HTTPTest {
             Thread.sleep(100L);
 
             curly.Request request = new Request("http://localhost:8888/");
-            Map<String, Object> query = new HashMap<String, Object>();
-            query.put("k", "v\nH2: evil");
-            request.setQueryParams(query);
+            request.addQueryParam("k", "v\nH2: evil");
             Response response = curly.HTTP.get(request);
             assertThat(response.getStatus(), is(200));
         } finally {

@@ -46,10 +46,11 @@ public class Request {
 
         // set additional query parameters
         if (method.equals(Method.GET) && getQueryParams() != null && getQueryParams().size() > 0) {
-            for (String key : getQueryParams().keySet()) {
-                Object value = getQueryParams().get(key);
-                if (value != null) {
-                    String newParam = HTTP.urlEncode(key) + "=" + HTTP.urlEncode(value.toString());
+            for (QueryParam queryParam : getQueryParams()) {
+                if (queryParam != null && queryParam.getValue() != null) {
+                    String name = queryParam.getName();
+                    String value = String.valueOf(queryParam.getValue());
+                    String newParam = HTTP.urlEncode(name) + "=" + HTTP.urlEncode(value);
                     url += (url.contains("?") ? "&" : "?") + newParam;
                 }
             }
@@ -85,7 +86,7 @@ public class Request {
 
     private Map<String, String> headers = new HashMap<String, String>();
 
-    private Map<String, Object> queryParams = new HashMap<String, Object>();
+    private List<QueryParam> queryParams = new ArrayList<QueryParam>();
 
     private RequestBody requestBody = new RequestBody(this);
 
@@ -178,11 +179,20 @@ public class Request {
         return this;
     }
 
-    public Map<String, Object> getQueryParams() {
+    public Request addQueryParam(String name, Object value) {
+        return addQueryParam(new QueryParam(name, value));
+    }
+
+    public Request addQueryParam(QueryParam queryParam) {
+        getQueryParams().add(queryParam);
+        return this;
+    }
+
+    public List<QueryParam> getQueryParams() {
         return queryParams;
     }
 
-    public Request setQueryParams(Map<String, Object> queryParams) {
+    public Request setQueryParams(List<QueryParam> queryParams) {
         this.queryParams = queryParams;
         return this;
     }

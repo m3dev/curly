@@ -17,79 +17,85 @@ package curly.scala
 
 import scala.collection.JavaConverters._
 
-case class Request(url: String) extends curly.Request(url) {
+case class Request(url: String) {
+
+  val underlying = new curly.Request(url)
+
+  def asJava: curly.Request = underlying
 
   def enableThrowingIOException(enabled: Boolean): Request = {
-    setEnableThrowingIOException(enabled)
+    underlying.setEnableThrowingIOException(enabled)
     this
   }
 
   def url(url: String): Request = {
-    setUrl(url)
+    underlying.setUrl(url)
     this
   }
 
-  def connectTimeoutMillis(): Int = getConnectTimeoutMillis
+  def connectTimeoutMillis(): Int = underlying.getConnectTimeoutMillis
 
   def connectTimeoutMillis(millis: Int): Request = {
-    setConnectTimeoutMillis(millis)
+    underlying.setConnectTimeoutMillis(millis)
     this
   }
 
-  def readTimeoutMillis(): Int = getReadTimeoutMillis
+  def readTimeoutMillis(): Int = underlying.getReadTimeoutMillis
 
   def readTimeoutMillis(millis: Int): Request = {
-    setReadTimeoutMillis(millis)
+    underlying.setReadTimeoutMillis(millis)
     this
   }
 
-  def referer(): String = getReferer
+  def referer(): String = underlying.getReferer
 
   def referer(referer: String): Request = {
-    setReferer(referer)
+    underlying.setReferer(referer)
     this
   }
 
-  def userAgent(): String = getUserAgent
+  def userAgent(): String = underlying.getUserAgent
 
   def userAgent(ua: String): Request = {
-    setUserAgent(ua)
+    underlying.setUserAgent(ua)
     this
   }
 
-  def charset(): String = getCharset
+  def charset(): String = underlying.getCharset
 
   def charset(charset: String): Request = {
-    setCharset(charset)
+    underlying.setCharset(charset)
     this
   }
 
-  def headerNames(): Set[String] = getHeaderNames.asScala.toSet
+  def headerNames(): Set[String] = underlying.getHeaderNames.asScala.toSet
 
-  def header(name: String): String = getHeader(name)
+  def header(name: String): String = underlying.getHeader(name)
 
   def header(name: String, value: String): Request = {
-    setHeader(name, value)
+    underlying.setHeader(name, value)
     this
   }
 
-  def queryParams(): Map[String, Any] = getQueryParams.asScala.toMap
+  def queryParams(): List[(String, Any)] = {
+    underlying.getQueryParams.asScala.map(e => (e.getName, e.getValue)).toList
+  }
 
-  def queryParams(queryParams: Map[String, Any]): Request = {
-    setQueryParams(queryParams.map {
-      case (k, v) => (k, v.asInstanceOf[java.lang.Object])
+  def queryParams(queryParams: (String, Any)*): Request = {
+    underlying.setQueryParams(queryParams.map {
+      case (k, v) => new curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
     }.asJava)
     this
   }
 
-  def requestBody(): RequestBody = RequestBody(getRequestBody)
+  def requestBody(): RequestBody = RequestBody(underlying.getRequestBody)
 
   def body(body: Array[Byte], contentType: String = curly.Request.X_WWW_FORM_URLENCODED): Request = {
-    setBody(body, contentType)
+    underlying.setBody(body, contentType)
     this
   }
 
-  def bodyAsBytes(): Array[Byte] = getRequestBody.getBytes
+  def bodyAsBytes(): Array[Byte] = underlying.getRequestBody.getBytes
 
   def contentType(): Request = {
     requestBody.contentType
@@ -101,21 +107,23 @@ case class Request(url: String) extends curly.Request(url) {
     this
   }
 
-  def formParams(): Map[String, Any] = getFormParams.asScala.toMap
+  def formParams(): Map[String, Any] = underlying.getFormParams.asScala.toMap
 
   def formParams(formParams: Map[String, Any]): Request = {
-    setFormParams(formParams.map {
+    underlying.setFormParams(formParams.map {
       case (k, v) => (k, v.asInstanceOf[java.lang.Object])
     }.asJava)
     this
   }
 
-  def multipartFormData(): List[FormData] = getMultipartFormData.asScala.map { j: curly.FormData =>
-    FormData(name = j.getName, bytes = j.getBody)
-  }.toList
+  def multipartFormData(): List[FormData] = {
+    underlying.getMultipartFormData.asScala.map { j: curly.FormData =>
+      FormData(name = j.getName, bytes = j.getBody)
+    }.toList
+  }
 
   def multipartFormData(formData: List[FormData]): Request = {
-    setMultipartFormData(
+    underlying.setMultipartFormData(
       formData.map(f => f.asInstanceOf[curly.FormData]).asJava
     )
     this

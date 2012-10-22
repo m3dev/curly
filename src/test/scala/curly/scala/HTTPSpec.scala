@@ -34,7 +34,7 @@ class HTTPSpec extends Specification {
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get("http://localhost:8877/", Map("foo" -> "bar"))
+        val response = HTTP.get("http://localhost:8877/", "foo" -> "bar")
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
@@ -51,7 +51,7 @@ class HTTPSpec extends Specification {
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.get(Request("http://localhost:8877/").queryParams(Map("foo" -> "bar")))
+        val response = HTTP.get(Request("http://localhost:8877/").queryParams("foo" -> "bar"))
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")

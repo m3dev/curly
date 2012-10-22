@@ -20,22 +20,22 @@ import curly.{ HTTP => JavaHTTP, Request => JavaRequest }
 
 object HTTP {
 
-  def get(req: Request): Response = Response(JavaHTTP.get(req))
+  def get(req: Request): Response = Response(JavaHTTP.get(req.asJava))
 
   def get(url: String, charset: String = curly.Request.DEFAULT_CHARSET): Response = {
     Response(JavaHTTP.get(new JavaRequest(url, charset)))
   }
 
-  def get(url: String, queryParams: Map[String, Any]): Response = {
+  def get(url: String, queryParams: (String, Any)*): Response = {
     Response(JavaHTTP.get(new JavaRequest(url).setQueryParams(queryParams.map {
-      case (k, v) => (k, v.asInstanceOf[java.lang.Object])
+      case (k, v) => new curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
     }.asJava)))
   }
 
-  def post(req: Request): Response = Response(JavaHTTP.post(req))
+  def post(req: Request): Response = Response(JavaHTTP.post(req.asJava))
 
   def post(url: String, data: String): Response = {
-    Response(JavaHTTP.post(Request(url).body(data.getBytes)))
+    Response(JavaHTTP.post(Request(url).body(data.getBytes).asJava))
   }
 
   def post(url: String, formParams: Map[String, Any]): Response = {
@@ -49,10 +49,10 @@ object HTTP {
       new JavaRequest(url).setMultipartFormData(multipartFormData.map(_.asInstanceOf[curly.FormData]).asJava)))
   }
 
-  def put(req: Request): Response = Response(JavaHTTP.put(req))
+  def put(req: Request): Response = Response(JavaHTTP.put(req.asJava))
 
   def put(url: String, data: String): Response = {
-    Response(JavaHTTP.put(new Request(url).body(data.getBytes)))
+    Response(JavaHTTP.put(new Request(url).body(data.getBytes).asJava))
   }
 
   def put(url: String, formParams: Map[String, Any]): Response = {
@@ -66,14 +66,14 @@ object HTTP {
       new JavaRequest(url).setMultipartFormData(multipartFormData.map(_.asInstanceOf[curly.FormData]).asJava)))
   }
 
-  def delete(req: Request): Response = Response(JavaHTTP.delete(req))
+  def delete(req: Request): Response = Response(JavaHTTP.delete(req.asJava))
 
-  def head(req: Request): Response = Response(JavaHTTP.head(req))
+  def head(req: Request): Response = Response(JavaHTTP.head(req.asJava))
 
-  def options(req: Request): Response = Response(JavaHTTP.options(req))
+  def options(req: Request): Response = Response(JavaHTTP.options(req.asJava))
 
-  def trace(req: Request): Response = Response(JavaHTTP.trace(req))
+  def trace(req: Request): Response = Response(JavaHTTP.trace(req.asJava))
 
-  def request(method: Method, req: Request): Response = Response(JavaHTTP.request(method, req))
+  def request(method: Method, req: Request): Response = Response(JavaHTTP.request(method, req.asJava))
 
 }
