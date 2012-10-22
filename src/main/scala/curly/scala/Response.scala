@@ -27,9 +27,9 @@ case class Response(underlying: curly.Response) {
 
   def headers(headers: Map[String, String]): Unit = underlying.setHeaders(headers.asJava)
 
-  def cookies(): Map[String, String] = underlying.getCookies.asScala.toMap
+  def rawCookies(): Map[String, String] = underlying.getRawCookies.asScala.toMap
 
-  def cookies(cookies: Map[String, String]): Unit = underlying.setCookies(cookies.asJava)
+  def rawCookies(cookies: Map[String, String]): Unit = underlying.setRawCookies(cookies.asJava)
 
   def headerFields(): Map[String, Seq[String]] = underlying.getHeaderFields.asScala.map {
     case (k, v) => (k, v.asScala.toSeq)

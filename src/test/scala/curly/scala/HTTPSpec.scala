@@ -120,7 +120,7 @@ class HTTPSpec extends Specification {
         }).start()
         Thread.sleep(300L)
 
-        val response = HTTP.post("http://localhost:8888/", Seq(FormData(name = "toResponse", text = TextInput("bar"))))
+        val response = HTTP.post("http://localhost:8888/", FormData(name = "toResponse", text = TextInput("bar")))
         response.status must equalTo(200)
         response.asString must equalTo("bar")
       } finally {
@@ -171,7 +171,7 @@ class HTTPSpec extends Specification {
         }).start()
         Thread.sleep(300L)
 
-        val response = HTTP.put("http://localhost:8888/", Seq(FormData(name = "toResponse", text = TextInput("bar"))))
+        val response = HTTP.put("http://localhost:8888/", FormData(name = "toResponse", text = TextInput("bar")))
         response.status must equalTo(200)
         response.asString must equalTo("bar")
       } finally {

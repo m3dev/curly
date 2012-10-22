@@ -134,7 +134,7 @@ public class HTTP {
                 }
             }
         }
-        response.setCookies(cookies);
+        response.setRawCookies(cookies);
 
         if (stream != null) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();

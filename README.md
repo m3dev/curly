@@ -7,7 +7,7 @@
 ### Scala via xsbt
 
 ```scala
-libraryDependencies += "com.m3" %% "curl-scala" % "0.4.0-SNAPSHOT"
+libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
 ```
 
 ### Java via Maven
@@ -16,7 +16,7 @@ libraryDependencies += "com.m3" %% "curl-scala" % "0.4.0-SNAPSHOT"
 <dependencies>
   <dependency>
     <groupId>com.m3</groupId>
-    <artifactId>curl</artifactId>
+    <artifactId>curly</artifactId>
     <version>0.4.0-SNAPSHOT</version>
   </dependency>
 </dependencies>
@@ -25,10 +25,10 @@ libraryDependencies += "com.m3" %% "curl-scala" % "0.4.0-SNAPSHOT"
 ### Groovy via Grape
 
 ```groovy
-@Grab('com.m3:curl:0.4.0-SNAPSHOT')
+@Grab('com.m3:curly:0.4.0-SNAPSHOT')
 
-import curl.*;
-response = HTTP.get(new Request("http://seratch.github.com"));
+import curly.*;
+response = HTTP.get(new Request("http://example.com"));
 println(response.getTextBody());
 ```
 
@@ -59,9 +59,9 @@ bin: Array[Byte] = Array(60, 33, 68, 79, 67, ...
 POST/PUT:
 
 ```scala
-val response = HTTP.post("http://example.com/register", "aa=bb")
+val response = HTTP.post("http://example.com/register", "aa=bb&ccc=123")
 
-val response = HTTP.post("http://example.com/register", Map("aaa" -> "bb"))
+val response = HTTP.post("http://example.com/register", "aaa" -> "bb", "ccc" -> 123)
 ```
 
 DELETE/OPTIONS/HEAD/TRACE:
@@ -87,13 +87,10 @@ response.getBody()     // -> byte[] : ....
 response.getTextBody() // -> String : "<htmll><head>..."
 ```
 
-It's also possible to append the query string with a Map object.
+It's also possible to append the query string.
 
 ```java
-Request request = new Request("http://example.com/?name=Andy");
-Map<String, Object> queryParams = new HashMap<String, Object>();
-queryParams.put("age", 20);
-request.setQueryParams(queryParams);
+Request request = new Request("http://example.com/?name=Andy").addQueryParam("age", 20);
 ````
 
 The default value for "Accept-Charset" is "UTF-8". Needless to say, it's possible to specify other encoding values.
@@ -191,7 +188,7 @@ Response response = HTTP.trace(request);
 
 response.getTextBody();
 // TRACE / HTTP/1.1
-// User-Agent: curly (https://github.com/seratch/curly)
+// User-Agent: Curly HTTP Client (https://github.com/m3dev/curly)
 // Accept-Charset: UTF-8
 // Host: example.com
 // Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
@@ -207,3 +204,5 @@ response.getTextBody();
 ## License
 
 Apache License, Version 2.0
+
+

@@ -28,7 +28,7 @@ public class Response {
 
     private Map<String, List<String>> headerFields = new HashMap<String, List<String>>();
 
-    private Map<String, String> cookies = new HashMap<String, String>();
+    private Map<String, String> rawCookies = new HashMap<String, String>();
 
     private String charset;
 
@@ -58,12 +58,12 @@ public class Response {
         this.headerFields = headerFields;
     }
 
-    public Map<String, String> getCookies() {
-        return cookies;
+    public Map<String, String> getRawCookies() {
+        return rawCookies;
     }
 
-    public void setCookies(Map<String, String> cookies) {
-        this.cookies = cookies;
+    public void setRawCookies(Map<String, String> rawCookies) {
+        this.rawCookies = rawCookies;
     }
 
     public void setCharset(String charset) {

@@ -15,21 +15,18 @@
  */
 package curly.scala
 
-import scala.collection.JavaConverters._
-import curly.{ HTTP => JavaHTTP, Request => JavaRequest }
+import curly.{ HTTP => JavaHTTP }
 
 object HTTP {
 
   def get(req: Request): Response = Response(JavaHTTP.get(req.asJava))
 
   def get(url: String, charset: String = curly.Request.DEFAULT_CHARSET): Response = {
-    Response(JavaHTTP.get(new JavaRequest(url, charset)))
+    Response(JavaHTTP.get(Request(url).charset(charset).asJava))
   }
 
   def get(url: String, queryParams: (String, Any)*): Response = {
-    Response(JavaHTTP.get(new JavaRequest(url).setQueryParams(queryParams.map {
-      case (k, v) => new curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
-    }.asJava)))
+    Response(JavaHTTP.get(Request(url).queryParams(queryParams: _*).asJava))
   }
 
   def post(req: Request): Response = Response(JavaHTTP.post(req.asJava))
@@ -39,31 +36,25 @@ object HTTP {
   }
 
   def post(url: String, formParams: Map[String, Any]): Response = {
-    Response(JavaHTTP.post(new JavaRequest(url, formParams.map {
-      case (k, v) => (k, v.asInstanceOf[java.lang.Object])
-    }.asJava)))
+    Response(JavaHTTP.post(Request(url).formParams(formParams).asJava))
   }
 
-  def post(url: String, multipartFormData: Seq[FormData]): Response = {
-    Response(JavaHTTP.post(
-      new JavaRequest(url).setMultipartFormData(multipartFormData.map(_.asInstanceOf[curly.FormData]).asJava)))
+  def post(url: String, multipartFormData: (FormData)*): Response = {
+    Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava))
   }
 
   def put(req: Request): Response = Response(JavaHTTP.put(req.asJava))
 
   def put(url: String, data: String): Response = {
-    Response(JavaHTTP.put(new Request(url).body(data.getBytes).asJava))
+    Response(JavaHTTP.put(Request(url).body(data.getBytes).asJava))
   }
 
   def put(url: String, formParams: Map[String, Any]): Response = {
-    Response(JavaHTTP.put(new JavaRequest(url, formParams.map {
-      case (k, v) => (k, v.asInstanceOf[java.lang.Object])
-    }.asJava)))
+    Response(JavaHTTP.put(Request(url).formParams(formParams).asJava))
   }
 
-  def put(url: String, multipartFormData: Seq[FormData]): Response = {
-    Response(JavaHTTP.post(
-      new JavaRequest(url).setMultipartFormData(multipartFormData.map(_.asInstanceOf[curly.FormData]).asJava)))
+  def put(url: String, multipartFormData: (FormData)*): Response = {
+    Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava))
   }
 
   def delete(req: Request): Response = Response(JavaHTTP.delete(req.asJava))
