@@ -68,103 +68,109 @@ public class HTTP {
 
         boolean needToThrowException = false;
         String exceptionMessage = "";
-        InputStream stream = null;
+        InputStream inputStream = null;
+
         try {
-            if (request.getBytes() != null) {
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", request.getContentType());
-                OutputStream os = conn.getOutputStream();
-                try {
-                    os.write(request.getBytes());
-                } finally {
-                    IOUtil.closeSafely(os);
-                }
-            } else if (request.getFormParams() != null && request.getFormParams().size() > 0) {
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                byte[] body = request.getRequestBody().asApplicationXWwwFormUrlencoded();
-                OutputStream os = conn.getOutputStream();
-                try {
-                    os.write(body);
-                } finally {
-                    IOUtil.closeSafely(os);
-                }
-            } else if (request.getMultipartFormData() != null && request.getMultipartFormData().size() > 0) {
-                conn.setDoOutput(true);
-                String boundary = "----HTTPilotBoundary_" + System.currentTimeMillis();
-                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-                byte[] body = request.getRequestBody().asMultipart(boundary);
-                OutputStream os = conn.getOutputStream();
-                try {
-                    os.write(body);
-                } finally {
-                    IOUtil.closeSafely(os);
-                }
-            }
-
-            conn.connect();
-            stream = conn.getInputStream();
-
-        } catch (IOException ioe) {
-            if (request.isEnableThrowingIOException()) {
-                needToThrowException = true;
-                exceptionMessage = ioe.getMessage();
-            }
-            stream = conn.getErrorStream();
-        }
-
-        Response response = new Response();
-        response.setCharset(request.getCharset());
-        response.setStatus(conn.getResponseCode());
-        response.setHeaderFields(conn.getHeaderFields());
-        Map<String, String> headers = new HashMap<String, String>();
-        for (String headerName : conn.getHeaderFields().keySet()) {
-            if (headerName != null && headerName.equals("Set-Cookie")) {
-                continue;
-            }
-            headers.put(headerName, conn.getHeaderField(headerName));
-        }
-        response.setHeaders(headers);
-
-        List<String> cookieFields = conn.getHeaderFields().get("Set-Cookie");
-        if (cookieFields != null) {
-            for (String cookieField : cookieFields) {
-                String[] tmpArray = cookieField.split("=");
-                if (tmpArray.length > 0) {
-                    String name = tmpArray[0];
-                    response.getRawCookies().put(name, cookieField);
-                }
-            }
-        }
-
-        if (stream != null) {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
             try {
-                int c;
-                while ((c = stream.read()) != -1) {
-                    output.write(c);
+                if (request.getBytes() != null) {
+                    conn.setDoOutput(true);
+                    conn.setRequestProperty("Content-Type", request.getContentType());
+                    OutputStream outputStream = conn.getOutputStream();
+                    try {
+                        outputStream.write(request.getBytes());
+                    } finally {
+                        IOUtil.closeSafely(outputStream);
+                    }
+                } else if (request.getFormParams() != null && request.getFormParams().size() > 0) {
+                    conn.setDoOutput(true);
+                    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                    byte[] body = request.getRequestBody().asApplicationXWwwFormUrlencoded();
+                    OutputStream outputStream = conn.getOutputStream();
+                    try {
+                        outputStream.write(body);
+                    } finally {
+                        IOUtil.closeSafely(outputStream);
+                    }
+                } else if (request.getMultipartFormData() != null && request.getMultipartFormData().size() > 0) {
+                    conn.setDoOutput(true);
+                    String boundary = "----CurlyHTTPClientBoundary_" + System.currentTimeMillis();
+                    conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                    byte[] body = request.getRequestBody().asMultipart(boundary);
+                    OutputStream outputStream = conn.getOutputStream();
+                    try {
+                        outputStream.write(body);
+                    } finally {
+                        IOUtil.closeSafely(outputStream);
+                    }
                 }
-                response.setBody(output.toByteArray());
-            } finally {
-                IOUtil.closeSafely(output);
-            }
-        }
 
-        try {
+                conn.connect();
+                inputStream = conn.getInputStream();
+
+            } catch (IOException ioe) {
+                if (request.isEnableThrowingIOException()) {
+                    needToThrowException = true;
+                    exceptionMessage = ioe.getMessage();
+                }
+                inputStream = conn.getErrorStream();
+            }
+
+            Response response = new Response();
+            response.setCharset(request.getCharset());
+            response.setStatus(conn.getResponseCode());
+            response.setHeaderFields(conn.getHeaderFields());
+            Map<String, String> headers = new HashMap<String, String>();
+            for (String headerName : conn.getHeaderFields().keySet()) {
+                if (headerName != null && headerName.equals("Set-Cookie")) {
+                    continue;
+                }
+                headers.put(headerName, conn.getHeaderField(headerName));
+            }
+            response.setHeaders(headers);
+
+            List<String> cookieFields = conn.getHeaderFields().get("Set-Cookie");
+            if (cookieFields != null) {
+                for (String cookieField : cookieFields) {
+                    String[] tmpArray = cookieField.split("=");
+                    if (tmpArray.length > 0) {
+                        String name = tmpArray[0];
+                        response.getRawCookies().put(name, cookieField);
+                    }
+                }
+            }
+
+            if (inputStream != null) {
+                ByteArrayOutputStream bytesOutput = new ByteArrayOutputStream();
+                try {
+                    int c;
+                    while ((c = inputStream.read()) != -1) {
+                        bytesOutput.write(c);
+                    }
+                    response.setBody(bytesOutput.toByteArray());
+                } finally {
+                    IOUtil.closeSafely(bytesOutput);
+                }
+            }
+
             if (needToThrowException) {
                 throw new HTTPIOException(exceptionMessage, response);
             } else {
                 return response;
             }
+
         } finally {
+            IOUtil.closeSafely(inputStream);
             conn.disconnect();
         }
-
     }
 
     public static String urlEncode(String rawValue) {
+        return urlEncode(rawValue, "UTF-8");
+    }
+
+    public static String urlEncode(String rawValue, String charset) {
         try {
-            return URLEncoder.encode(rawValue, "UTF-8");
+            return URLEncoder.encode(rawValue, charset);
         } catch (UnsupportedEncodingException unexpected) {
             throw new IllegalStateException(unexpected.getMessage(), unexpected);
         }
