@@ -25,6 +25,9 @@ import java.io.Writer;
  */
 public class IOUtil {
 
+    private IOUtil() {
+    }
+
     public static void closeSafely(InputStream is) {
         if (is != null) {
             try {
