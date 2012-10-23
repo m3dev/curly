@@ -39,8 +39,8 @@ import com.m3.curly.scala._
 
 val response: Response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
 
-val response: Response = HTTP.get("http://search.example.com")
-  .queryParams("query" -> "Application", "lang" -> "Scala")
+val response: Response = HTTP.get("http://search.example.com",
+  "query" -> "Application", "lang" -> "Scala")
 
 val status: Int = response.status
 val headers: Map[String, String] = response.headers
