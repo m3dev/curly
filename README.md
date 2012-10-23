@@ -7,7 +7,7 @@
 ### Scala via xsbt
 
 ```scala
-libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
+libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0"
 ```
 
 ### Java via Maven
@@ -17,7 +17,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
   <dependency>
     <groupId>com.m3</groupId>
     <artifactId>curly</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.0</version>
   </dependency>
 </dependencies>
 ```
@@ -25,7 +25,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0-SNAPSHOT"
 ### Groovy via Grape
 
 ```groovy
-@Grab('com.m3:curly:0.4.0-SNAPSHOT')
+@Grab('com.m3:curly:0.4.0')
 ```
 
 ## Usage
@@ -144,7 +144,7 @@ The following code is an example of setting the message body of the request dire
 
 ```java
 Request request = new Request("http://example.com/register");
-String xml = "<?xml version="1.0" encoding="UTF-8" standalone="no" ?><user><id>1234</id><name>Andy</name></user>";
+String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><user><id>1234</id><name>Andy</name></user>";
 request.setBody(xml.getBytes(), "text/xml");
 Response response = HTTP.post(request);
 ```
