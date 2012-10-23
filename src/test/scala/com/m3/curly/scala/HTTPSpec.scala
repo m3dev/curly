@@ -10,6 +10,9 @@ class HTTPSpec extends Specification {
 
   "HTTP" should {
 
+    // --------
+    // GET
+
     "get" in {
       val server = new org.eclipse.jetty.server.Server(8077)
       try {
@@ -78,6 +81,9 @@ class HTTPSpec extends Specification {
       }
     }
 
+    // --------
+    // POST
+
     "post with data string" in {
       val server = new org.eclipse.jetty.server.Server(8187)
       try {
@@ -128,6 +134,10 @@ class HTTPSpec extends Specification {
         Thread.sleep(300L)
       }
     }
+
+
+    // --------
+    // PUT
 
     "put with data string" in {
       val server = new org.eclipse.jetty.server.Server(8186)
