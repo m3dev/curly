@@ -28,19 +28,16 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0"
 @Grab('com.m3:curly:0.4.0')
 ```
 
-## Usage
+## Scala Usage
 
-### Scala Usage
-
-GET:
+### GET
 
 ```scala
 import com.m3.curly.scala._
 
-val response: Response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
+val response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
 
-val response: Response = HTTP.get("http://search.example.com",
-  "query" -> "Application", "lang" -> "Scala")
+val response = HTTP.get("http://search.example.com", "query" -> "Application", "lang" -> "Scala")
 
 val status: Int = response.status
 val headers: Map[String, String] = response.headers
@@ -50,29 +47,39 @@ val html: String = response.asString # or response.textBody
 val bin: Array[Byte] = response.asBytes # or response.body
 ```
 
-POST/PUT:
+If you need to configure HTTP requests (e.g. adding some headers), use `Request` directly.
 
 ```scala
-val response: Response = HTTP.post("http://example.com/register", "aa=bb&ccc=123")
+val request = Request("http://example.com").header("Authorization", "OAuth realm: ...")
+val response = HTTP.get(request)
+```
 
-val response: Response = HTTP.post("http://example.com/register", Map("aaa" -> "bb", "ccc" -> 123))
+### POST/PUT
 
-val response: Response = HTTP.post("http://example.com/register",
+```scala
+val response = HTTP.post("http://example.com/users", "aa=bb&ccc=123")
+
+val response = HTTP.post("http://example.com/users", Map("aaa" -> "bb", "ccc" -> 123))
+
+val response: Response = HTTP.post("http://example.com/users",
   FormData(name = "name", text = TextInput("Andy", "UTF-8")),
-  FormData(name = "image", file = FileInput(new java.io.File("./myface.jpg"), "myface.jpg"), "image/jpeg"))
+  FormData(name = "profile_image", file = FileInput(new java.io.File("./myface.jpg"), "myface.jpg"), "image/jpeg"))
   // or FormData(name = "bin", bytes = Array[Byte](1,2,3))
 ```
 
-DELETE/OPTIONS/HEAD/TRACE:
+### DELETE/OPTIONS/HEAD/TRACE
 
 ```scala
-val response: Response = HTTP.delete("http://example.com/users/123")
-val response: Response = HTTP.options("http://example.com/")
-val response: Response = HTTP.head("http://example.com/")
-val response: Response = HTTP.trace("http://example.com/")
+val response = HTTP.delete("http://example.com/users/123")
+
+val response = HTTP.options("http://example.com/")
+
+val response = HTTP.head("http://example.com/")
+
+val response = HTTP.trace("http://example.com/")
 ```
 
-## Java/Groovy Usage
+## Java Usage
 
 ### GET
 
