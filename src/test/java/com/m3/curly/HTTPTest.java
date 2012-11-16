@@ -484,6 +484,39 @@ public class HTTPTest {
     }
 
     @Test
+    public void get_A$Request_noFollowRedirects301() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            @Override
+            public void handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request,
+                               HttpServletResponse response) {
+                try {
+                    if (!"landing".equals(request.getRequestURI())) {
+                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY );
+                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                baseRequest.setHandled(true);
+            }
+        });
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new Request("http://localhost:8888/").setFollowRedirects(false);
+            Response response = com.m3.curly.HTTP.get(request);
+            assertThat(response.getStatus(), is(301));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
     public void get_A$Request_followRedirects() throws Exception {
         final HttpServer server = new HttpServer(new AbstractHandler() {
             @Override
@@ -492,6 +525,39 @@ public class HTTPTest {
                 try {
                     if (!"/landing".equals(request.getRequestURI())) {
                         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY );
+                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                baseRequest.setHandled(true);
+            }
+        });
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new Request("http://localhost:8888/").setFollowRedirects(true);
+            Response response = com.m3.curly.HTTP.get(request);
+            assertThat(response.getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void get_A$Request_followRedirects301() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            @Override
+            public void handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request,
+                               HttpServletResponse response) {
+                try {
+                    if (!"/landing".equals(request.getRequestURI())) {
+                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY );
                         response.setHeader("Location", "http://localhost:8888/landing") ;
                     } else {
                         response.setStatus(HttpServletResponse.SC_OK);
