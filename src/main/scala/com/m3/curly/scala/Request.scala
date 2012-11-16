@@ -32,6 +32,8 @@ case class Request(url: String) {
     this
   }
 
+  def followRedirects(): Boolean = underlying.isFollowRedirects
+
   def followRedirects(follow: Boolean): Request = {
     underlying.setFollowRedirects(follow)
     this
