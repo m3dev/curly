@@ -30,6 +30,7 @@ public class Request {
     public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
     private boolean enableThrowingIOException = false;
+    private boolean followRedirects = HttpURLConnection.getFollowRedirects();
     private String url;
     private int connectTimeoutMillis = 3000;
     private int readTimeoutMillis = 10000;
@@ -74,6 +75,7 @@ public class Request {
         conn.setRequestMethod(method.toString());
         conn.setConnectTimeout(connectTimeoutMillis);
         conn.setReadTimeout(readTimeoutMillis);
+        conn.setInstanceFollowRedirects(followRedirects);
 
         // HTTP header injection is checked by HttpURLConnection
         conn.setRequestProperty("User-Agent", userAgent);
@@ -90,6 +92,15 @@ public class Request {
 
     public Request setEnableThrowingIOException(boolean enableThrowingIOException) {
         this.enableThrowingIOException = enableThrowingIOException;
+        return this;
+    }
+
+    public boolean isFollowRedirects() {
+        return followRedirects;
+    }
+
+    public Request setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects;
         return this;
     }
 

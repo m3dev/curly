@@ -32,6 +32,11 @@ case class Request(url: String) {
     this
   }
 
+  def followRedirects(follow: Boolean): Request = {
+    underlying.setFollowRedirects(follow)
+    this
+  }
+
   def url(url: String): Request = {
     underlying.setUrl(url)
     this
