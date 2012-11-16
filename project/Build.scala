@@ -3,7 +3,7 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.4.0"
+  val _version = "0.4.1"
 
   lazy val libraryProject = Project(id = "library", base = file("."), settings = Defaults.defaultSettings ++ Seq(
     sbtPlugin := false,
@@ -63,6 +63,16 @@ object AppBuild extends Build {
           <id>seratch</id>
           <name>Kazuhiro Sera</name>
           <url>https://github.com/seratch</url>
+        </developer>
+        <developer>
+          <id>gakuzzzz</id>
+          <name>gakuzzzz</name>
+          <url>https://github.com/gakuzzzz</url>
+        </developer>
+        <developer>
+          <id>reki2000</id>
+          <name>reki2000</name>
+          <url>https://github.com/reki2000</url>
         </developer>
       </developers>
     )

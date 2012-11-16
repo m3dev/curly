@@ -7,7 +7,7 @@
 ### Scala via xsbt
 
 ```scala
-libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0"
+libraryDependencies += "com.m3" %% "curly-scala" % "0.4.1"
 ```
 
 ### Java via Maven
@@ -17,7 +17,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0"
   <dependency>
     <groupId>com.m3</groupId>
     <artifactId>curly</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
   </dependency>
 </dependencies>
 ```
@@ -25,7 +25,7 @@ libraryDependencies += "com.m3" %% "curly-scala" % "0.4.0"
 ### Groovy via Grape
 
 ```groovy
-@Grab('com.m3:curly:0.4.0')
+@Grab('com.m3:curly:0.4.1')
 ```
 
 ## Scala Usage
