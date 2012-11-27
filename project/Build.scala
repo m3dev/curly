@@ -3,7 +3,7 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.4.1"
+  val _version = "0.4.2"
 
   lazy val libraryProject = Project(id = "library", base = file("."), settings = Defaults.defaultSettings ++ Seq(
     sbtPlugin := false,
