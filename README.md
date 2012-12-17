@@ -87,8 +87,8 @@ The following code is an example of sending a GET request.
 
 ```java
 import com.m3.curly.*;
-Request request = new Request("http://example.com/");
-Response response = HTTP.get(request);
+Response response = HTTP.get("http://example.com/");
+// or HTTP.get(new Request("http://example.com/"));
 
 response.getStatus()   // -> int : 200
 response.getHeaders()  // -> Map<String, String> : {null=HTTP/1.1 200 OK, ETag="33414 ...
@@ -130,10 +130,9 @@ The following code is an example of sending a POST request.
 Map<String, Object> formParams = new HashMap<String, Object>();
 formParams.put("name", "Andy");
 formParams.put("age", 20);
-// Request request = new Request("http://example.com/register", formParams);
-Request request = new Request("http://example.com/register");
-request.setFormParams(formParams);
-Response response = HTTP.post(request);
+
+Response response = HTTP.post("http://example.com/register", formParams);
+// or HTTP.post(new Request("http://example.com/register", formParams));
 ```
 
 "multipart/form-data" is also available.
@@ -161,24 +160,22 @@ Response response = HTTP.post(request);
 The same as sending POST request.
 
 ```java
-Request request = new Request("http://example.com/register");
 String json = "{\"id\": \"12345\, \"name\": \"Andy\"}";
-request.setBody(json.getBytes(), "text/json");
-Response response = HTTP.put(request);
+Response response = HTTP.put("http://example.com/register", json.getBytes(), "text/json");
 ```
 
 ### DELETE
 
 ```java
-Request request = new Request("http://example.com/user/12345");
-Response response = HTTP.delete(request);
+Response response = HTTP.delete("http://example.com/user/12345");
+// or HTTP.delete(new Request("http://example.com/user/12345"));
 ```
 
 ### OPTIONS
 
 ```java
-Request request = new Request("http://example.com/blog/12345");
-Response response = HTTP.options(request);
+Response response = HTTP.options("http://example.com/blog/12345");
+// or HTTP.options(new Request("http://example.com/blog/12345"));
 
 response.getHeaders().get("Allow").toString() // -> "[GET, HEAD, OPTIONS, TRACE]"
 ```
@@ -188,6 +185,9 @@ response.getHeaders().get("Allow").toString() // -> "[GET, HEAD, OPTIONS, TRACE]
 ```java
 Request request = new Request("http://example.com/");
 Response response = HTTP.head(request);
+
+// or
+// Response response = HTTP.head("http://example.com/");
 ```
 
 ### TRACE
@@ -195,6 +195,9 @@ Response response = HTTP.head(request);
 ```java
 Request request = new Request("http://example.com/");
 Response response = HTTP.trace(request);
+
+// or
+// Response response = HTTP.trace("http://example.com/");
 
 response.getTextBody();
 // TRACE / HTTP/1.1
@@ -210,6 +213,7 @@ response.getTextBody();
 
 - Kazuhiro Sera (@seratch)
 - gakuzzzz (@gakuzzzz)
+- reki2000 (@reki2000)
 
 ## License
 
