@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Test;
 import server.HttpServer;
 import server.PostFormdataServer;
+import server.PutFormdataServer;
 import server.handler.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +63,25 @@ public class HTTPTest {
     }
 
     @Test
+    public void get_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new GetMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.get("http://localhost:8888/");
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getHeaderFields().size(), is(greaterThan(0)));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+
+    @Test
     public void get_A$Request_queryString() throws Exception {
         final HttpServer server = new HttpServer(new GetMethodHandler());
         try {
@@ -97,6 +117,13 @@ public class HTTPTest {
     public void get_A$Request_text_charset() throws Exception {
         com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/", "EUC-JP");
         com.m3.curly.Response response = com.m3.curly.HTTP.get(request);
+        assertThat(response.getStatus(), is(200));
+        assertThat(response.getTextBody().length(), is(greaterThan(0)));
+    }
+
+    @Test
+    public void get_A$String$String() throws Exception {
+        com.m3.curly.Response response = com.m3.curly.HTTP.get("http://seratch.net/", "EUC-JP");
         assertThat(response.getStatus(), is(200));
         assertThat(response.getTextBody().length(), is(greaterThan(0)));
     }
@@ -152,6 +179,14 @@ public class HTTPTest {
     }
 
     @Test
+    public void post_A$String$Map() throws Exception {
+        Map<String, Object> formParams = new HashMap<String, Object>();
+        formParams.put("name", "Andy");
+        com.m3.curly.Response response = com.m3.curly.HTTP.post("http://seratch.net/", formParams);
+        assertThat(response.getStatus(), is(200));
+    }
+
+    @Test
     public void post_A$Request() throws Exception {
         final HttpServer server = new HttpServer(new PostMethodHandler());
         try {
@@ -197,6 +232,47 @@ public class HTTPTest {
     }
 
     @Test
+    public void post_A$String$List_multipart() throws Exception {
+        final HttpServer server = new PostFormdataServer();
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            entry1.setContentType("text/plain");
+            formDataList.add(entry1);
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("formData2", new TextInput("2222", "UTF-8"));
+            formDataList.add(entry2);
+            com.m3.curly.Response response = com.m3.curly.HTTP.post("http://localhost:8888/", formDataList);
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void post_A$String$byteArray$String() throws Exception {
+        final HttpServer server = new HttpServer(new PostBodyMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.post("http://localhost:8888",
+                    "<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
+            assertThat(response.getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+
+    @Test
     public void post_A$Request_file() throws Exception {
         final HttpServer server = new PostFormdataServer();
         try {
@@ -222,8 +298,52 @@ public class HTTPTest {
     }
 
     @Test
-    public void put_A$Request() throws Exception {
+    public void put_A$String$Map() throws Exception {
         final HttpServer server = new HttpServer(new PutMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Map<String, Object> formParams = new HashMap<String, Object>();
+            formParams.put("userName", "日本語");
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/", formParams);
+            com.m3.curly.Response response = com.m3.curly.HTTP.put(request);
+            assertThat(response.getStatus(), is(201));
+            assertThat(response.getTextBody(), is("userName:日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void put_A$String$List() throws Exception {
+        final HttpServer server = new PutFormdataServer();
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            List<com.m3.curly.FormData> multipart = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            entry1.setTextBody("日本語", "UTF-8");
+            multipart.add(entry1);
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("gitignore", new FileInput(new File(".gitignore"), "text/plain"));
+            multipart.add(entry2);
+            com.m3.curly.Response response = com.m3.curly.HTTP.put("http://localhost:8888/", multipart);
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+
+    @Test
+    public void put_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new PutBodyMethodHandler());
         try {
             Runnable runnable = getRunnable(server);
             new Thread(runnable).start();
@@ -235,6 +355,24 @@ public class HTTPTest {
             assertThat(getResponse.getTextBody(), is("だｍ"));
             request.setBody("<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
             com.m3.curly.Response response = com.m3.curly.HTTP.put(request);
+            assertThat(response.getStatus(), is(201));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void put_A$String$byteArray$String() throws Exception {
+        final HttpServer server = new HttpServer(new PutBodyMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.put("http://localhost:8888/",
+                    "<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
             assertThat(response.getStatus(), is(201));
             assertThat(response.getTextBody(), is(""));
         } finally {
@@ -265,6 +403,23 @@ public class HTTPTest {
     }
 
     @Test
+    public void delete_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new DeleteMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.delete("http://localhost:8888/");
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
     public void head_A$Request() throws Exception {
         final HttpServer server = new HttpServer(new HeadMethodHandler());
         try {
@@ -277,6 +432,23 @@ public class HTTPTest {
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
             com.m3.curly.Response response = com.m3.curly.HTTP.head(request);
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void options_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new HeadMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.head("http://localhost:8888/");
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is(""));
         } finally {
@@ -329,7 +501,24 @@ public class HTTPTest {
     }
 
     @Test
-    public void request_A$HttpMethod$Request() throws Exception {
+    public void trace_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new TraceMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.trace("http://localhost:8888/");
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void request_A$Method$Request() throws Exception {
         com.m3.curly.Method method = com.m3.curly.Method.GET;
         com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/");
         com.m3.curly.Response response = com.m3.curly.HTTP.request(method, request);
@@ -337,7 +526,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void request_A$HttpMethod$Request_HeaderInjection() throws Exception {
+    public void request_A$Method$Request_HeaderInjection() throws Exception {
         com.m3.curly.Method method = Method.GET;
         com.m3.curly.Request request = new com.m3.curly.Request("http://seratch.net/");
         request.setHeader("H1", "dummy\n H2: evil");
@@ -458,8 +647,8 @@ public class HTTPTest {
                                HttpServletResponse response) {
                 try {
                     if (!"landing".equals(request.getRequestURI())) {
-                        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY );
-                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+                        response.setHeader("Location", "http://localhost:8888/landing");
                     } else {
                         response.setStatus(HttpServletResponse.SC_OK);
                     }
@@ -491,8 +680,8 @@ public class HTTPTest {
                                HttpServletResponse response) {
                 try {
                     if (!"landing".equals(request.getRequestURI())) {
-                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY );
-                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                        response.setHeader("Location", "http://localhost:8888/landing");
                     } else {
                         response.setStatus(HttpServletResponse.SC_OK);
                     }
@@ -524,8 +713,8 @@ public class HTTPTest {
                                HttpServletResponse response) {
                 try {
                     if (!"/landing".equals(request.getRequestURI())) {
-                        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY );
-                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+                        response.setHeader("Location", "http://localhost:8888/landing");
                     } else {
                         response.setStatus(HttpServletResponse.SC_OK);
                     }
@@ -557,8 +746,8 @@ public class HTTPTest {
                                HttpServletResponse response) {
                 try {
                     if (!"/landing".equals(request.getRequestURI())) {
-                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY );
-                        response.setHeader("Location", "http://localhost:8888/landing") ;
+                        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                        response.setHeader("Location", "http://localhost:8888/landing");
                     } else {
                         response.setStatus(HttpServletResponse.SC_OK);
                     }
@@ -580,6 +769,24 @@ public class HTTPTest {
             server.stop();
             Thread.sleep(100L);
         }
+    }
+
+
+    @Test
+    public void urlEncode_A$String() throws Exception {
+        String rawValue = "日本語";
+        String actual = HTTP.urlEncode(rawValue);
+        String expected = "%E6%97%A5%E6%9C%AC%E8%AA%9E";
+        assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    public void urlEncode_A$String$String() throws Exception {
+        String rawValue = "日本語";
+        String charset = "Shift_JIS";
+        String actual = HTTP.urlEncode(rawValue, charset);
+        String expected = "%93%FA%96%7B%8C%EA";
+        assertThat(actual, is(equalTo(expected)));
     }
 
 }

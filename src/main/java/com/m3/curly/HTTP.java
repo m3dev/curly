@@ -34,28 +34,84 @@ public class HTTP {
         return request(Method.GET, request);
     }
 
+    public static Response get(String url) throws IOException {
+        return get(new Request(url));
+    }
+
+    public static Response get(String url, String charset) throws IOException {
+        return get(new Request(url, charset));
+    }
+
     public static Response post(Request request) throws IOException {
         return request(Method.POST, request);
+    }
+
+    public static Response post(String url, Map<String, Object> formParams) throws IOException {
+        return post(new Request(url, formParams));
+    }
+
+    public static Response post(String url, List<FormData> multipartFormData) throws IOException {
+        Request request = new Request(url);
+        request.setMultipartFormData(multipartFormData);
+        return post(request);
+    }
+
+    public static Response post(String url, byte[] body, String contentType) throws IOException {
+        Request request = new Request(url);
+        request.setBody(body, contentType);
+        return post(request);
     }
 
     public static Response put(Request request) throws IOException {
         return request(Method.PUT, request);
     }
 
+    public static Response put(String url, Map<String, Object> formParams) throws IOException {
+        return put(new Request(url, formParams));
+    }
+
+    public static Response put(String url, List<FormData> multipartFormData) throws IOException {
+        Request request = new Request(url);
+        request.setMultipartFormData(multipartFormData);
+        return put(request);
+    }
+
+    public static Response put(String url, byte[] body, String contentType) throws IOException {
+        Request request = new Request(url);
+        request.setBody(body, contentType);
+        return put(request);
+    }
+
     public static Response delete(Request request) throws IOException {
         return request(Method.DELETE, request);
+    }
+
+    public static Response delete(String url) throws IOException {
+        return delete(new Request(url));
     }
 
     public static Response head(Request request) throws IOException {
         return request(Method.HEAD, request);
     }
 
+    public static Response head(String url) throws IOException {
+        return head(new Request(url));
+    }
+
     public static Response options(Request request) throws IOException {
         return request(Method.OPTIONS, request);
     }
 
+    public static Response options(String url) throws IOException {
+        return options(new Request(url));
+    }
+
     public static Response trace(Request request) throws IOException {
         return request(Method.TRACE, request);
+    }
+
+    public static Response trace(String url) throws IOException {
+        return trace(new Request(url));
     }
 
     public static Response request(Method method, Request request) throws IOException {
