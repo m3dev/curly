@@ -4,7 +4,7 @@
 
     <groupId>com.m3</groupId>
     <artifactId>curly</artifactId>
-    <version>0.4.3</version>
+    <version>0.4.4</version>
     <packaging>jar</packaging>
 
     <name>Curly HTTP Client</name>

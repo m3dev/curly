@@ -4,12 +4,6 @@
 
 ## Getting Started
 
-### Scala via xsbt
-
-```scala
-libraryDependencies += "com.m3" %% "curly-scala" % "[0.4,)"
-```
-
 ### Java via Maven
 
 ```xml
@@ -22,61 +16,16 @@ libraryDependencies += "com.m3" %% "curly-scala" % "[0.4,)"
 </dependencies>
 ```
 
+### Scala via xsbt
+
+```scala
+libraryDependencies += "com.m3" %% "curly-scala" % "[0.4,)"
+```
+
 ### Groovy via Grape
 
 ```groovy
 @Grab('com.m3:curly:[0.4,)')
-```
-
-## Scala Usage
-
-### GET
-
-```scala
-import com.m3.curly.scala._
-
-val response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
-
-val response = HTTP.get("http://search.example.com", "query" -> "Application", "lang" -> "Scala")
-
-val status: Int = response.status
-val headers: Map[String, String] = response.headers
-val headerFields: Map[String, Seq[String]] = response.headerFields
-val rawCookies: Map[String, String] = response.rawCookies
-val html: String = response.asString # or response.textBody
-val bin: Array[Byte] = response.asBytes # or response.body
-```
-
-If you need to configure HTTP requests (e.g. adding some headers), use `Request` directly.
-
-```scala
-val request = Request("http://example.com").header("Authorization", "OAuth realm: ...")
-val response = HTTP.get(request)
-```
-
-### POST/PUT
-
-```scala
-val response = HTTP.post("http://example.com/users", "aa=bb&ccc=123")
-
-val response = HTTP.post("http://example.com/users", Map("aaa" -> "bb", "ccc" -> 123))
-
-val response: Response = HTTP.post("http://example.com/users",
-  FormData(name = "name", text = TextInput("Andy", "UTF-8")),
-  FormData(name = "profile_image", file = FileInput(new java.io.File("./myface.jpg"), "myface.jpg"), "image/jpeg"))
-  // or FormData(name = "bin", bytes = Array[Byte](1,2,3))
-```
-
-### DELETE/OPTIONS/HEAD/TRACE
-
-```scala
-val response = HTTP.delete("http://example.com/users/123")
-
-val response = HTTP.options("http://example.com/")
-
-val response = HTTP.head("http://example.com/")
-
-val response = HTTP.trace("http://example.com/")
 ```
 
 ## Java Usage
@@ -207,6 +156,67 @@ response.getTextBody();
 // Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
 // Connection: keep-alive
 //
+```
+
+### Async Request
+
+All of the above has asynchronous APIs too.
+
+```java
+Future<Response> future = HTTP.asyncGet("http://www.example.com");
+Response response = future.get();
+```
+
+
+## Scala Usage
+
+### GET
+
+```scala
+import com.m3.curly.scala._
+
+val response = HTTP.get("http://search.example.com?query=Application&lang=Scala")
+
+val response = HTTP.get("http://search.example.com", "query" -> "Application", "lang" -> "Scala")
+
+val status: Int = response.status
+val headers: Map[String, String] = response.headers
+val headerFields: Map[String, Seq[String]] = response.headerFields
+val rawCookies: Map[String, String] = response.rawCookies
+val html: String = response.asString # or response.textBody
+val bin: Array[Byte] = response.asBytes # or response.body
+```
+
+If you need to configure HTTP requests (e.g. adding some headers), use `Request` directly.
+
+```scala
+val request = Request("http://example.com").header("Authorization", "OAuth realm: ...")
+val response = HTTP.get(request)
+```
+
+### POST/PUT
+
+```scala
+val response = HTTP.post("http://example.com/users", "aa=bb&ccc=123")
+
+val response = HTTP.post("http://example.com/users", Map("aaa" -> "bb", "ccc" -> 123))
+
+val response: Response = HTTP.post("http://example.com/users",
+  FormData(name = "name", text = TextInput("Andy", "UTF-8")),
+  FormData(name = "profile_image", file = FileInput(new java.io.File("./myface.jpg"), "myface.jpg"), "image/jpeg"))
+  // or FormData(name = "bin", bytes = Array[Byte](1,2,3))
+```
+
+### DELETE/OPTIONS/HEAD/TRACE
+
+```scala
+val response = HTTP.delete("http://example.com/users/123")
+
+val response = HTTP.options("http://example.com/")
+
+val response = HTTP.head("http://example.com/")
+
+val response = HTTP.trace("http://example.com/")
 ```
 
 ## Developers
