@@ -23,7 +23,7 @@ public class PutMethodHandler extends MethodHandler {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().print(result);
                 baseRequest.setHandled(true);
-                response.setStatus(HttpServletResponse.SC_CREATED);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }

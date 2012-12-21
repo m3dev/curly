@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -309,7 +310,7 @@ public class HTTPTest {
             formParams.put("userName", "日本語");
             com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/", formParams);
             com.m3.curly.Response response = com.m3.curly.HTTP.put(request);
-            assertThat(response.getStatus(), is(201));
+            assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("userName:日本語"));
         } finally {
             server.stop();
@@ -355,7 +356,7 @@ public class HTTPTest {
             assertThat(getResponse.getTextBody(), is("だｍ"));
             request.setBody("<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
             com.m3.curly.Response response = com.m3.curly.HTTP.put(request);
-            assertThat(response.getStatus(), is(201));
+            assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is(""));
         } finally {
             server.stop();
@@ -373,7 +374,7 @@ public class HTTPTest {
 
             com.m3.curly.Response response = com.m3.curly.HTTP.put("http://localhost:8888/",
                     "<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml");
-            assertThat(response.getStatus(), is(201));
+            assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is(""));
         } finally {
             server.stop();
@@ -442,15 +443,16 @@ public class HTTPTest {
 
     @Test
     public void options_A$String() throws Exception {
-        final HttpServer server = new HttpServer(new HeadMethodHandler());
+        final HttpServer server = new HttpServer(new OptionsMethodHandler());
         try {
             Runnable runnable = getRunnable(server);
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Response response = com.m3.curly.HTTP.head("http://localhost:8888/");
+            com.m3.curly.Response response = com.m3.curly.HTTP.options("http://localhost:8888/");
             assertThat(response.getStatus(), is(200));
-            assertThat(response.getTextBody(), is(""));
+            assertThat(response.getHeaderFields().get("Allow").toString(), is("[GET, HEAD, OPTIONS, TRACE]"));
+            assertThat(response.getTextBody(), is("おｋ"));
         } finally {
             server.stop();
             Thread.sleep(100L);
@@ -787,6 +789,398 @@ public class HTTPTest {
         String actual = HTTP.urlEncode(rawValue, charset);
         String expected = "%93%FA%96%7B%8C%EA";
         assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    public void asyncGet_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            public void handle(String t, org.eclipse.jetty.server.Request baseReq, HttpServletRequest req, HttpServletResponse res) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                baseReq.setHandled(true);
+            }
+        });
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Request request = new Request("http://localhost:8888/");
+            Future<Response> f = HTTP.asyncGet(request);
+            assertThat(f.get().getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncGet_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            public void handle(String t, org.eclipse.jetty.server.Request baseReq, HttpServletRequest req, HttpServletResponse res) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                baseReq.setHandled(true);
+            }
+        });
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Future<Response> f = HTTP.asyncGet("http://localhost:8888/");
+            assertThat(f.get().getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncGet_A$String$String() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            public void handle(String t, org.eclipse.jetty.server.Request baseReq, HttpServletRequest req, HttpServletResponse res) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                baseReq.setHandled(true);
+            }
+        });
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Future<Response> f = HTTP.asyncGet("http://localhost:8888/", "UTF-8");
+            assertThat(f.get().getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPost_A$Request() throws Exception {
+        final HttpServer server = new PostFormdataServer();
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            entry1.setContentType("text/plain");
+            formDataList.add(entry1);
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("formData2", new TextInput("2222", "UTF-8"));
+            formDataList.add(entry2);
+            request.setMultipartFormData(formDataList);
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPost(request).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPost_A$String$Map() throws Exception {
+        final HttpServer server = new PostFormdataServer();
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Map<String, Object> formParams = new HashMap<String, Object>();
+            formParams.put("toResponse", "日本語");
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPost("http://localhost:8888/", formParams).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPost_A$String$List() throws Exception {
+        final HttpServer server = new PostFormdataServer();
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            entry1.setContentType("text/plain");
+            formDataList.add(entry1);
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("formData2", new TextInput("2222", "UTF-8"));
+            formDataList.add(entry2);
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPost("http://localhost:8888/", formDataList).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPost_A$String$byteArray$String() throws Exception {
+        final HttpServer server = new HttpServer(new PostBodyMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPost("http://localhost:8888",
+                    "<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml").get();
+            assertThat(response.getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPut_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new PutMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Map<String, Object> formParams = new HashMap<String, Object>();
+            formParams.put("userName", "日本語");
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/", formParams);
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPut(request).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("userName:日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPut_A$String$Map() throws Exception {
+        final HttpServer server = new HttpServer(new PutMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            Map<String, Object> formParams = new HashMap<String, Object>();
+            formParams.put("userName", "日本語");
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPut("http://localhost:8888/", formParams).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("userName:日本語"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPut_A$String$List() throws Exception {
+        final HttpServer server = new HttpServer(new PutMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
+            com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
+            entry1.setContentType("text/plain");
+            formDataList.add(entry1);
+            com.m3.curly.FormData entry2 = new com.m3.curly.FormData("formData2", new TextInput("2222", "UTF-8"));
+            formDataList.add(entry2);
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPut("http://localhost:8888/", formDataList).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("userName:null"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncPut_A$String$byteArray$String() throws Exception {
+        final HttpServer server = new HttpServer(new PutMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncPut("http://localhost:8888",
+                    "<user><id>1234</id><name>Andy</name></user>".getBytes(), "text/xml").get();
+            assertThat(response.getStatus(), is(200));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncDelete_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new DeleteMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
+            assertThat(getResponse.getStatus(), is(405));
+            assertThat(getResponse.getTextBody(), is("だｍ"));
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncDelete(request).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncDelete_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new DeleteMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncDelete("http://localhost:8888/").get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncHead_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new HeadMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
+            assertThat(getResponse.getStatus(), is(405));
+            assertThat(getResponse.getTextBody(), is("だｍ"));
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncHead(request).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void head_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new HeadMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.head("http://localhost:8888/");
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncHead_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new HeadMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncHead("http://localhost:8888/").get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is(""));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncOptions_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new OptionsMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncOptions(new Request("http://localhost:8888/")).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncOptions_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new OptionsMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncOptions("http://localhost:8888/").get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncTrace_A$Request() throws Exception {
+        final HttpServer server = new HttpServer(new TraceMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
+            assertThat(getResponse.getStatus(), is(405));
+            assertThat(getResponse.getTextBody(), is("だｍ"));
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncTrace(request).get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
+    @Test
+    public void asyncTrace_A$String() throws Exception {
+        final HttpServer server = new HttpServer(new TraceMethodHandler());
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncTrace("http://localhost:8888/").get();
+            assertThat(response.getStatus(), is(200));
+            assertThat(response.getTextBody(), is("おｋ"));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
     }
 
 }

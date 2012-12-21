@@ -30,7 +30,7 @@ public class PutBodyMethodHandler extends MethodHandler {
             if (sb.length() == 0) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } else {
-                response.setStatus(HttpServletResponse.SC_CREATED);
+                response.setStatus(HttpServletResponse.SC_OK);
             }
         } else {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);

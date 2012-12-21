@@ -15,17 +15,24 @@
  */
 package com.m3.curly;
 
+import jsr166y.ForkJoinPool;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * HTTP
  */
 public class HTTP {
+
+    private static final ForkJoinPool forkJoinPool = new ForkJoinPool();
 
     private HTTP() {
     }
@@ -34,20 +41,60 @@ public class HTTP {
         return request(Method.GET, request);
     }
 
+    public static Future<Response> asyncGet(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return get(request);
+            }
+        }));
+    }
+
     public static Response get(String url) throws IOException {
         return get(new Request(url));
+    }
+
+    public static Future<Response> asyncGet(final String url) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return get(url);
+            }
+        }));
     }
 
     public static Response get(String url, String charset) throws IOException {
         return get(new Request(url, charset));
     }
 
+    public static Future<Response> asyncGet(final String url, final String charset) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return get(url, charset);
+            }
+        }));
+    }
+
     public static Response post(Request request) throws IOException {
         return request(Method.POST, request);
     }
 
+    public static Future<Response> asyncPost(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return post(request);
+            }
+        }));
+    }
+
     public static Response post(String url, Map<String, Object> formParams) throws IOException {
         return post(new Request(url, formParams));
+    }
+
+    public static Future<Response> asyncPost(final String url, final Map<String, Object> formParams) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return post(url, formParams);
+            }
+        }));
     }
 
     public static Response post(String url, List<FormData> multipartFormData) throws IOException {
@@ -56,18 +103,50 @@ public class HTTP {
         return post(request);
     }
 
+    public static Future<Response> asyncPost(final String url, final List<FormData> multipartFormData) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return post(url, multipartFormData);
+            }
+        }));
+    }
+
     public static Response post(String url, byte[] body, String contentType) throws IOException {
         Request request = new Request(url);
         request.setBody(body, contentType);
         return post(request);
     }
 
+    public static Future<Response> asyncPost(final String url, final byte[] body, final String contentType) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return post(url, body, contentType);
+            }
+        }));
+    }
+
     public static Response put(Request request) throws IOException {
         return request(Method.PUT, request);
     }
 
+    public static Future<Response> asyncPut(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return put(request);
+            }
+        }));
+    }
+
     public static Response put(String url, Map<String, Object> formParams) throws IOException {
         return put(new Request(url, formParams));
+    }
+
+    public static Future<Response> asyncPut(final String url, final Map<String, Object> formParams) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return put(url, formParams);
+            }
+        }));
     }
 
     public static Response put(String url, List<FormData> multipartFormData) throws IOException {
@@ -76,42 +155,122 @@ public class HTTP {
         return put(request);
     }
 
+    public static Future<Response> asyncPut(final String url, final List<FormData> multipartFormData) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return put(url, multipartFormData);
+            }
+        }));
+    }
+
     public static Response put(String url, byte[] body, String contentType) throws IOException {
         Request request = new Request(url);
         request.setBody(body, contentType);
         return put(request);
     }
 
+    public static Future<Response> asyncPut(final String url, final byte[] body, final String contentType) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return put(url, body, contentType);
+            }
+        }));
+    }
+
     public static Response delete(Request request) throws IOException {
         return request(Method.DELETE, request);
+    }
+
+    public static Future<Response> asyncDelete(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return delete(request);
+            }
+        }));
     }
 
     public static Response delete(String url) throws IOException {
         return delete(new Request(url));
     }
 
+    public static Future<Response> asyncDelete(final String url) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return delete(url);
+            }
+        }));
+    }
+
     public static Response head(Request request) throws IOException {
         return request(Method.HEAD, request);
+    }
+
+    public static Future<Response> asyncHead(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return head(request);
+            }
+        }));
     }
 
     public static Response head(String url) throws IOException {
         return head(new Request(url));
     }
 
+    public static Future<Response> asyncHead(final String url) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return head(url);
+            }
+        }));
+    }
+
     public static Response options(Request request) throws IOException {
         return request(Method.OPTIONS, request);
+    }
+
+    public static Future<Response> asyncOptions(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return options(request);
+            }
+        }));
     }
 
     public static Response options(String url) throws IOException {
         return options(new Request(url));
     }
 
+    public static Future<Response> asyncOptions(final String url) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return options(url);
+            }
+        }));
+    }
+
     public static Response trace(Request request) throws IOException {
         return request(Method.TRACE, request);
     }
 
+    public static Future<Response> asyncTrace(final Request request) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return trace(request);
+            }
+        }));
+    }
+
     public static Response trace(String url) throws IOException {
         return trace(new Request(url));
+    }
+
+    public static Future<Response> asyncTrace(final String url) {
+        return executeAndReturn(new FutureTask(new Callable<Response>() {
+            public Response call() throws IOException {
+                return trace(url);
+            }
+        }));
     }
 
     public static Response request(Method method, Request request) throws IOException {
@@ -230,6 +389,11 @@ public class HTTP {
         } catch (UnsupportedEncodingException unexpected) {
             throw new IllegalStateException(unexpected.getMessage(), unexpected);
         }
+    }
+
+    private static Future<Response> executeAndReturn(FutureTask<Response> futureTask) {
+        forkJoinPool.execute(futureTask);
+        return futureTask;
     }
 
 }
