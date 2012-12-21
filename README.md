@@ -165,6 +165,14 @@ All of the above has asynchronous APIs too.
 ```java
 Future<Response> future = HTTP.asyncGet("http://www.example.com");
 Response response = future.get();
+
+AsyncRequest req = new AsyncRequest("http://www.example.com")
+req.setFailureHandler(new AsyncFailurehandler() {
+  public void handle(IOException e) {
+    // do something
+  }
+});
+HTTP.asyncGet(req);
 ```
 
 
