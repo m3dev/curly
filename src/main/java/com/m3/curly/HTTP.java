@@ -16,6 +16,8 @@
 package com.m3.curly;
 
 import jsr166y.ForkJoinPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -32,6 +34,8 @@ import java.util.concurrent.FutureTask;
  */
 public class HTTP {
 
+    private static final Logger logger = LoggerFactory.getLogger(HTTP.class);
+
     private static final ForkJoinPool forkJoinPool = new ForkJoinPool();
 
     private HTTP() {
@@ -41,10 +45,17 @@ public class HTTP {
         return request(Method.GET, request);
     }
 
-    public static Future<Response> asyncGet(final Request request) {
+    public static Future<Response> asyncGet(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return get(request);
+            public Response call() {
+                try {
+                    Response response = get(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -53,34 +64,33 @@ public class HTTP {
         return get(new Request(url));
     }
 
-    public static Future<Response> asyncGet(final String url) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return get(url);
-            }
-        }));
+    public static Future<Response> asyncGet(String url) {
+        return asyncGet(new AsyncRequest(url));
     }
 
     public static Response get(String url, String charset) throws IOException {
         return get(new Request(url, charset));
     }
 
-    public static Future<Response> asyncGet(final String url, final String charset) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return get(url, charset);
-            }
-        }));
+    public static Future<Response> asyncGet(String url, String charset) {
+        return asyncGet(new AsyncRequest(url, charset));
     }
 
     public static Response post(Request request) throws IOException {
         return request(Method.POST, request);
     }
 
-    public static Future<Response> asyncPost(final Request request) {
+    public static Future<Response> asyncPost(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return post(request);
+                try {
+                    Response response = post(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -89,12 +99,8 @@ public class HTTP {
         return post(new Request(url, formParams));
     }
 
-    public static Future<Response> asyncPost(final String url, final Map<String, Object> formParams) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return post(url, formParams);
-            }
-        }));
+    public static Future<Response> asyncPost(String url, Map<String, Object> formParams) {
+        return asyncPost(new AsyncRequest(url, formParams));
     }
 
     public static Response post(String url, List<FormData> multipartFormData) throws IOException {
@@ -103,12 +109,10 @@ public class HTTP {
         return post(request);
     }
 
-    public static Future<Response> asyncPost(final String url, final List<FormData> multipartFormData) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return post(url, multipartFormData);
-            }
-        }));
+    public static Future<Response> asyncPost(String url, List<FormData> multipartFormData) {
+        AsyncRequest request = new AsyncRequest(url);
+        request.setMultipartFormData(multipartFormData);
+        return asyncPost(request);
     }
 
     public static Response post(String url, byte[] body, String contentType) throws IOException {
@@ -117,22 +121,27 @@ public class HTTP {
         return post(request);
     }
 
-    public static Future<Response> asyncPost(final String url, final byte[] body, final String contentType) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return post(url, body, contentType);
-            }
-        }));
+    public static Future<Response> asyncPost(String url, byte[] body, String contentType) {
+        AsyncRequest request = new AsyncRequest(url);
+        request.setBody(body, contentType);
+        return asyncPost(request);
     }
 
     public static Response put(Request request) throws IOException {
         return request(Method.PUT, request);
     }
 
-    public static Future<Response> asyncPut(final Request request) {
+    public static Future<Response> asyncPut(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return put(request);
+                try {
+                    Response response = put(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -141,12 +150,8 @@ public class HTTP {
         return put(new Request(url, formParams));
     }
 
-    public static Future<Response> asyncPut(final String url, final Map<String, Object> formParams) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return put(url, formParams);
-            }
-        }));
+    public static Future<Response> asyncPut(String url, Map<String, Object> formParams) {
+        return asyncPut(new AsyncRequest(url, formParams));
     }
 
     public static Response put(String url, List<FormData> multipartFormData) throws IOException {
@@ -155,12 +160,10 @@ public class HTTP {
         return put(request);
     }
 
-    public static Future<Response> asyncPut(final String url, final List<FormData> multipartFormData) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return put(url, multipartFormData);
-            }
-        }));
+    public static Future<Response> asyncPut(String url, List<FormData> multipartFormData) {
+        AsyncRequest request = new AsyncRequest(url);
+        request.setMultipartFormData(multipartFormData);
+        return asyncPut(request);
     }
 
     public static Response put(String url, byte[] body, String contentType) throws IOException {
@@ -169,22 +172,27 @@ public class HTTP {
         return put(request);
     }
 
-    public static Future<Response> asyncPut(final String url, final byte[] body, final String contentType) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return put(url, body, contentType);
-            }
-        }));
+    public static Future<Response> asyncPut(String url, byte[] body, String contentType) {
+        AsyncRequest request = new AsyncRequest(url);
+        request.setBody(body, contentType);
+        return asyncPut(request);
     }
 
     public static Response delete(Request request) throws IOException {
         return request(Method.DELETE, request);
     }
 
-    public static Future<Response> asyncDelete(final Request request) {
+    public static Future<Response> asyncDelete(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return delete(request);
+                try {
+                    Response response = delete(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -194,21 +202,24 @@ public class HTTP {
     }
 
     public static Future<Response> asyncDelete(final String url) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return delete(url);
-            }
-        }));
+        return asyncDelete(new AsyncRequest(url));
     }
 
     public static Response head(Request request) throws IOException {
         return request(Method.HEAD, request);
     }
 
-    public static Future<Response> asyncHead(final Request request) {
+    public static Future<Response> asyncHead(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return head(request);
+                try {
+                    Response response = head(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -218,21 +229,24 @@ public class HTTP {
     }
 
     public static Future<Response> asyncHead(final String url) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return head(url);
-            }
-        }));
+        return asyncHead(new AsyncRequest(url));
     }
 
     public static Response options(Request request) throws IOException {
         return request(Method.OPTIONS, request);
     }
 
-    public static Future<Response> asyncOptions(final Request request) {
+    public static Future<Response> asyncOptions(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return options(request);
+                try {
+                    Response response = options(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -242,21 +256,24 @@ public class HTTP {
     }
 
     public static Future<Response> asyncOptions(final String url) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return options(url);
-            }
-        }));
+        return asyncOptions(new AsyncRequest(url));
     }
 
     public static Response trace(Request request) throws IOException {
         return request(Method.TRACE, request);
     }
 
-    public static Future<Response> asyncTrace(final Request request) {
+    public static Future<Response> asyncTrace(final AsyncRequest request) {
         return executeAndReturn(new FutureTask(new Callable<Response>() {
             public Response call() throws IOException {
-                return trace(request);
+                try {
+                    Response response = trace(request);
+                    request.onSuccess(response);
+                    return response;
+                } catch (IOException e) {
+                    request.onFailure(e);
+                }
+                return null;
             }
         }));
     }
@@ -266,14 +283,27 @@ public class HTTP {
     }
 
     public static Future<Response> asyncTrace(final String url) {
-        return executeAndReturn(new FutureTask(new Callable<Response>() {
-            public Response call() throws IOException {
-                return trace(url);
-            }
-        }));
+        return asyncTrace(new AsyncRequest(url));
     }
 
     public static Response request(Method method, Request request) throws IOException {
+
+        if (logger.isDebugEnabled()) {
+
+            StringBuilder requestInfo = new StringBuilder().append("\n")
+                    .append("- HTTP Request started. -\n")
+                    .append(" " + method + " " + request.getUrl() + "\n")
+                    .append(" Charset: " + request.getCharset() + "\n")
+                    .append(" ContentType: " + request.getContentType() + "\n")
+                    .append(" Referer: " + request.getReferer() + "\n")
+                    .append(" UserAgent: " + request.getUserAgent() + "\n");
+            for (String name : request.getHeaderNames()) {
+                requestInfo.append(" " + name + ": " + request.getHeader(name) + "\n");
+            }
+            requestInfo.append("---------\n");
+
+            logger.debug(requestInfo.toString());
+        }
 
         HttpURLConnection conn = request.toHttpURLConnection(method);
 
@@ -323,6 +353,13 @@ public class HTTP {
                 inputStream = conn.getInputStream();
 
             } catch (IOException ioe) {
+
+                String message = method + " " + request.getUrl() + " failed because " + ioe.getMessage();
+                logger.warn(message);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(message, ioe);
+                }
+
                 if (request.isEnableThrowingIOException()) {
                     needToThrowException = true;
                     exceptionMessage = ioe.getMessage();
@@ -367,6 +404,22 @@ public class HTTP {
                 }
             }
 
+            if (logger.isDebugEnabled()) {
+                StringBuilder message = new StringBuilder()
+                        .append("\n")
+                        .append("- HTTP Request finished. -\n")
+                        .append(" " + method + " " + request.getUrl() + "\n")
+                        .append(" Status: " + response.getStatus() + "\n")
+                        .append(" Charset: " + response.getCharset() + "\n");
+                for (Map.Entry<String, List<String>> e : response.getHeaderFields().entrySet()) {
+                    if (e.getValue() != null && e.getValue().size() > 0) {
+                        message.append(" " + e.getKey() + ": " + e.getValue().get(0) + "\n");
+                    }
+                }
+                message.append("---------\n");
+                logger.debug(message.toString());
+            }
+
             if (needToThrowException) {
                 throw new HTTPIOException(exceptionMessage, response);
             } else {
@@ -374,6 +427,7 @@ public class HTTP {
             }
 
         } finally {
+
             IOUtil.closeSafely(inputStream);
             conn.disconnect();
         }

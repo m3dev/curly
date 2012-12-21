@@ -4,6 +4,8 @@ import com.m3.curly.FormData.FileInput;
 import com.m3.curly.FormData.TextInput;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import server.HttpServer;
 import server.PostFormdataServer;
 import server.PutFormdataServer;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -791,6 +794,8 @@ public class HTTPTest {
         assertThat(actual, is(equalTo(expected)));
     }
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Test
     public void asyncGet_A$Request() throws Exception {
         final HttpServer server = new HttpServer(new AbstractHandler() {
@@ -804,7 +809,12 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            Request request = new Request("http://localhost:8888/");
+            AsyncRequest request = new AsyncRequest("http://localhost:8888/");
+            request.setSuccessHandler(new AsyncSuccessHandler() {
+                public void handle(Response response) {
+                    logger.info("Success handler is called!");
+                }
+            });
             Future<Response> f = HTTP.asyncGet(request);
             assertThat(f.get().getStatus(), is(200));
         } finally {
@@ -812,6 +822,38 @@ public class HTTPTest {
             Thread.sleep(100L);
         }
     }
+
+    @Test
+    public void asyncGet_A$Request_failureHandler() throws Exception {
+        final HttpServer server = new HttpServer(new AbstractHandler() {
+            public void handle(String t, org.eclipse.jetty.server.Request baseReq, HttpServletRequest req, HttpServletResponse res) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                baseReq.setHandled(true);
+            }
+        });
+
+        try {
+            Runnable runnable = getRunnable(server);
+            new Thread(runnable).start();
+            Thread.sleep(100L);
+
+            final StringBuilder error = new StringBuilder();
+
+            AsyncRequest request = new AsyncRequest("http://localhost:11211/");
+            request.setFailureHandler(new AsyncFailureHandler() {
+                public void handle(IOException t) {
+                    error.append(t.getMessage());
+                }
+            });
+            Future<Response> f = HTTP.asyncGet(request);
+            assertThat(f.get(), nullValue());
+            assertThat(error.toString(), is(equalTo("Connection refused")));
+        } finally {
+            server.stop();
+            Thread.sleep(100L);
+        }
+    }
+
 
     @Test
     public void asyncGet_A$String() throws Exception {
@@ -863,7 +905,7 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.AsyncRequest request = new com.m3.curly.AsyncRequest("http://localhost:8888/");
             List<com.m3.curly.FormData> formDataList = new ArrayList<com.m3.curly.FormData>();
             com.m3.curly.FormData entry1 = new com.m3.curly.FormData("toResponse", new TextInput("日本語", "UTF-8"));
             entry1.setContentType("text/plain");
@@ -949,7 +991,7 @@ public class HTTPTest {
 
             Map<String, Object> formParams = new HashMap<String, Object>();
             formParams.put("userName", "日本語");
-            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/", formParams);
+            com.m3.curly.AsyncRequest request = new com.m3.curly.AsyncRequest("http://localhost:8888/", formParams);
             com.m3.curly.Response response = com.m3.curly.HTTP.asyncPut(request).get();
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("userName:日本語"));
@@ -1026,7 +1068,7 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.AsyncRequest request = new com.m3.curly.AsyncRequest("http://localhost:8888/");
             com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
@@ -1064,7 +1106,7 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.AsyncRequest request = new com.m3.curly.AsyncRequest("http://localhost:8888/");
             com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));
@@ -1119,7 +1161,7 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Response response = com.m3.curly.HTTP.asyncOptions(new Request("http://localhost:8888/")).get();
+            com.m3.curly.Response response = com.m3.curly.HTTP.asyncOptions(new AsyncRequest("http://localhost:8888/")).get();
             assertThat(response.getStatus(), is(200));
             assertThat(response.getTextBody(), is("おｋ"));
         } finally {
@@ -1153,7 +1195,7 @@ public class HTTPTest {
             new Thread(runnable).start();
             Thread.sleep(100L);
 
-            com.m3.curly.Request request = new com.m3.curly.Request("http://localhost:8888/");
+            com.m3.curly.AsyncRequest request = new com.m3.curly.AsyncRequest("http://localhost:8888/");
             com.m3.curly.Response getResponse = com.m3.curly.HTTP.get(request);
             assertThat(getResponse.getStatus(), is(405));
             assertThat(getResponse.getTextBody(), is("だｍ"));

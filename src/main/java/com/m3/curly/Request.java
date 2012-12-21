@@ -15,6 +15,9 @@
  */
 package com.m3.curly;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,6 +27,8 @@ import java.util.*;
  * Request
  */
 public class Request {
+
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final String DEFAULT_CHARSET = "UTF-8";
     public static final String DEFAULT_USER_AGENT = "Curly HTTP Client (https://github.com/m3dev/curly)";
