@@ -11,17 +11,22 @@ object AppBuild extends Build {
     name := "curly-scala",
     version := _version,
     scalaVersion := "2.10.0",
-    crossScalaVersions := Seq("2.10.0", "2.9.2", "2.9.1"),
+    crossScalaVersions := Seq("2.10.0", "2.9.3", "2.9.2", "2.9.1"),
     resolvers := Seq(
       "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
       "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"
     ),
     libraryDependencies <++= (scalaVersion) {
       scalaVersion =>
+        val specs2 = scalaVersion match {
+          case "2.10.0" => "specs2_2.10"
+          case "2.9.3" => "specs2_2.9.2"
+          case v => "specs2_" + v
+        }
         Seq(
           "com.m3" % "curly" % _version,
-          "org.specs2" %% "specs2" % (if (scalaVersion.startsWith("2.10.")) "[1.13,)" else "1.12.2") % "test",
-          "junit" % "junit" % "4.10" % "test",
+          "org.specs2" % specs2 % (if (scalaVersion.startsWith("2.10.")) "[1.13,)" else "1.12.2") % "test",
+          "junit" % "junit" % "4.11" % "test",
           "commons-fileupload" % "commons-fileupload" % "1.2.2" % "test",
           "commons-io" % "commons-io" % "2.0.1" % "test",
           "org.hamcrest" % "hamcrest-all" % "1.1" % "test",
