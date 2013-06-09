@@ -235,6 +235,8 @@ val response = HTTP.trace("http://example.com/")
 
 ## License
 
+Copyright 2012 M3, Inc.
+
 Apache License, Version 2.0
 
 
