@@ -16,6 +16,7 @@
 package com.m3.curly.scala
 
 import com.m3.curly.{ HTTP => JavaHTTP }
+import scala.concurrent.{ Future, ExecutionContext }
 
 /**
  * HTTP
@@ -35,6 +36,18 @@ object HTTP {
     Response(JavaHTTP.get(Request(url).queryParams(queryParams: _*).asJava))
   }
 
+  def asyncGet(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.get(req.asJava)))
+  }
+
+  def asyncGet(url: String, charset: String = com.m3.curly.Request.DEFAULT_CHARSET)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.get(Request(url).charset(charset).asJava)))
+  }
+
+  def asyncGet(url: String, queryParams: (String, Any)*)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.get(Request(url).queryParams(queryParams: _*).asJava)))
+  }
+
   // -----
   // POST
 
@@ -50,6 +63,22 @@ object HTTP {
 
   def post(url: String, multipartFormData: (FormData)*): Response = {
     Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava))
+  }
+
+  def asyncPost(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.post(req.asJava)))
+  }
+
+  def asyncPost(url: String, data: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.post(Request(url).body(data.getBytes).asJava)))
+  }
+
+  def asyncPost(url: String, formParams: Map[String, Any])(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.post(Request(url).formParams(formParams).asJava)))
+  }
+
+  def asyncPost(url: String, multipartFormData: (FormData)*)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.post(Request(url).multipartFormData(multipartFormData.toList).asJava)))
   }
 
   // -----
@@ -69,12 +98,36 @@ object HTTP {
     Response(JavaHTTP.put(Request(url).multipartFormData(multipartFormData.toList).asJava))
   }
 
+  def asyncPut(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.put(req.asJava)))
+  }
+
+  def asyncPut(url: String, data: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.put(Request(url).body(data.getBytes).asJava)))
+  }
+
+  def asyncPut(url: String, formParams: Map[String, Any])(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.put(Request(url).formParams(formParams).asJava)))
+  }
+
+  def asyncPut(url: String, multipartFormData: (FormData)*)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.put(Request(url).multipartFormData(multipartFormData.toList).asJava)))
+  }
+
   // -----
   // DELETE
 
   def delete(req: Request): Response = Response(JavaHTTP.delete(req.asJava))
 
   def delete(url: String): Response = Response(JavaHTTP.delete(Request(url).asJava))
+
+  def asyncDelete(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.delete(req.asJava)))
+  }
+
+  def asyncDelete(url: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.delete(Request(url).asJava)))
+  }
 
   // -----
   // HEAD
@@ -83,12 +136,28 @@ object HTTP {
 
   def head(url: String): Response = Response(JavaHTTP.head(Request(url).asJava))
 
+  def asyncHead(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.head(req.asJava)))
+  }
+
+  def asyncHead(url: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.head(Request(url).asJava)))
+  }
+
   // -----
   // OPTIONS
 
   def options(req: Request): Response = Response(JavaHTTP.options(req.asJava))
 
   def options(url: String): Response = Response(JavaHTTP.options(Request(url).asJava))
+
+  def asyncOptions(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.options(req.asJava)))
+  }
+
+  def asyncOptions(url: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.options(Request(url).asJava)))
+  }
 
   // -----
   // TRACE
@@ -97,9 +166,21 @@ object HTTP {
 
   def trace(url: String): Response = Response(JavaHTTP.trace(Request(url).asJava))
 
+  def asyncTrace(req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.trace(req.asJava)))
+  }
+
+  def asyncTrace(url: String)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.trace(Request(url).asJava)))
+  }
+
   // -----
   // General request
 
   def request(method: Method, req: Request): Response = Response(JavaHTTP.request(method, req.asJava))
+
+  def asyncRequest(method: Method, req: Request)(implicit ctx: ExecutionContext): Future[Response] = {
+    Future(Response(JavaHTTP.request(method, req.asJava)))
+  }
 
 }

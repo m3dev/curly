@@ -3,7 +3,7 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.4.5"
+  val _version = "0.5.0-SNAPSHOT"
 
   lazy val libraryProject = Project(id = "library", base = file("."), settings = Defaults.defaultSettings ++ Seq(
     sbtPlugin := false,
@@ -11,7 +11,7 @@ object AppBuild extends Build {
     name := "curly-scala",
     version := _version,
     scalaVersion := "2.10.0",
-    crossScalaVersions := Seq("2.10.0", "2.9.3", "2.9.2", "2.9.1"),
+    crossScalaVersions := Seq("2.10.0", "2.9.3"),
     resolvers := Seq(
       "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
       "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"
