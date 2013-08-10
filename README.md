@@ -11,7 +11,7 @@
   <dependency>
     <groupId>com.m3</groupId>
     <artifactId>curly</artifactId>
-    <version>[0.4,)</version>
+    <version>[0.5,)</version>
   </dependency>
 </dependencies>
 ```
@@ -19,13 +19,13 @@
 ### Scala via xsbt
 
 ```scala
-libraryDependencies += "com.m3" %% "curly-scala" % "[0.4,)"
+libraryDependencies += "com.m3" %% "curly-scala" % "[0.5,)"
 ```
 
 ### Groovy via Grape
 
 ```groovy
-@Grab('com.m3:curly:[0.4,)')
+@Grab('com.m3:curly:[0.5,)')
 ```
 
 ## Java Usage
@@ -227,11 +227,22 @@ val response = HTTP.head("http://example.com/")
 val response = HTTP.trace("http://example.com/")
 ```
 
+### Async Request
+
+All of the above has asynchronous APIs too.
+
+```java
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val future: Future[Response] = HTTP.asyncGet("http://www.example.com");
+```
+
 ## Developers
 
 - Kazuhiro Sera (@seratch)
-- gakuzzzz (@gakuzzzz)
-- reki2000 (@reki2000)
+- Manabu Nakamura (@gakuzzzz)
+- Reki Murakami (@reki2000)
 
 ## License
 
