@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.m3" level="debug"/>
+    <logger name="com.m3" level="info"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
