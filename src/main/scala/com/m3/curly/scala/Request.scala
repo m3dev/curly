@@ -93,9 +93,15 @@ case class Request(url: String) {
   }
 
   def queryParams(queryParams: (String, Any)*): Request = {
-    underlying.setQueryParams(queryParams.map {
-      case (k, v) => new com.m3.curly.QueryParam(k, v.asInstanceOf[java.lang.Object])
-    }.asJava)
+    queryParams.foreach(p => queryParam(p))
+    this
+  }
+
+  def queryParam(queryParam: (String, Any)): Request = {
+    queryParam match {
+      case (k, v) =>
+        underlying.addQueryParam(new com.m3.curly.QueryParam(k, v.asInstanceOf[java.lang.Object]))
+    }
     this
   }
 

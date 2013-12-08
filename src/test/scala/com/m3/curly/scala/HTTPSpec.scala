@@ -69,6 +69,23 @@ class HTTPSpec extends Specification {
       }
     }
 
+    "get using queryParam method" in {
+      val server = new org.eclipse.jetty.server.Server(8278)
+      try {
+        server.setHandler(getHandler)
+        new Thread(runnable(server)).start()
+        Thread.sleep(300L)
+
+        val response = HTTP.get(Request("http://localhost:8278/").queryParam("foo" -> "bar").queryParam("bar" -> "baz"))
+        response.status must equalTo(200)
+        response.asString.length must be_>(0)
+        response.asString must equalTo("foo:bar,bar:baz")
+      } finally {
+        server.stop()
+        Thread.sleep(300L)
+      }
+    }
+
     "get with charset" in {
       val server = new org.eclipse.jetty.server.Server(8377)
       try {
@@ -121,13 +138,13 @@ class HTTPSpec extends Specification {
     }
 
     "get asynchronously using queryParams method" in {
-      val server = new org.eclipse.jetty.server.Server(8277)
+      val server = new org.eclipse.jetty.server.Server(8278)
       try {
         server.setHandler(getHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = Await.result(HTTP.asyncGet(Request("http://localhost:8277/").queryParams("foo" -> "bar")), 5.seconds)
+        val response = Await.result(HTTP.asyncGet(Request("http://localhost:8278/").queryParams("foo" -> "bar")), 5.seconds)
         response.status must equalTo(200)
         response.asString.length must be_>(0)
         response.asString must equalTo("foo:bar")
@@ -190,7 +207,7 @@ class HTTPSpec extends Specification {
     }
 
     "post with TextInput" in {
-      val server = new _root_.server.PostFormdataServer
+      val server = new _root_.server.PostFormdataServer(8888)
       try {
         new Thread(new Runnable() {
           def run() {
@@ -241,7 +258,7 @@ class HTTPSpec extends Specification {
     }
 
     "post asynchronously with TextInput" in {
-      val server = new _root_.server.PostFormdataServer
+      val server = new _root_.server.PostFormdataServer(8888)
       try {
         new Thread(new Runnable() {
           def run() {
@@ -279,13 +296,13 @@ class HTTPSpec extends Specification {
     }
 
     "put with data Map" in {
-      val server = new org.eclipse.jetty.server.Server(8286)
+      val server = new org.eclipse.jetty.server.Server(8285)
       try {
         server.setHandler(putHandler)
         new Thread(runnable(server)).start()
         Thread.sleep(300L)
 
-        val response = HTTP.put("http://localhost:8286/", Map("foo" -> "bar"))
+        val response = HTTP.put("http://localhost:8285/", Map("foo" -> "bar"))
         response.status must equalTo(200)
         response.asString must equalTo("foo:bar")
       } finally {
@@ -345,7 +362,8 @@ class HTTPSpec extends Specification {
       try {
         if (req.getMethod().equals("GET")) {
           val foo = req.getParameter("foo")
-          val result = "foo:" + foo
+          val bar = req.getParameter("bar")
+          val result = "foo:" + foo + (if (bar == null) "" else ",bar:" + bar)
           resp.setCharacterEncoding("UTF-8")
           resp.getWriter().print(result)
           baseReq.setHandled(true)
