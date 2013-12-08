@@ -3,7 +3,7 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.5.0"
+  val _version = "0.5.1"
 
   lazy val libraryProject = Project(id = "library", base = file("."), settings = Defaults.defaultSettings ++ Seq(
     sbtPlugin := false,
@@ -31,9 +31,9 @@ object AppBuild extends Build {
           "commons-io"         % "commons-io"         % "2.4"              % "test",
           "org.hamcrest"       % "hamcrest-all"       % "1.3"              % "test",
           "commons-httpclient" % "commons-httpclient" % "3.1"              % "test",
-          "org.eclipse.jetty"  % "jetty-server"       % "7.6.12.v20130726" % "test",
-          "org.eclipse.jetty"  % "jetty-servlet"      % "7.6.12.v20130726" % "test",
-          "org.mockito"        % "mockito-all"        % "1.9.0"            % "test"
+          "org.eclipse.jetty"  % "jetty-server"       % "8.1.14.v20131031" % "test",
+          "org.eclipse.jetty"  % "jetty-servlet"      % "8.1.14.v20131031" % "test",
+          "org.mockito"        % "mockito-all"        % "1.9.5"            % "test"
         )
     },
     publishTo <<= version {
