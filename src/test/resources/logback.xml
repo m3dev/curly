@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="com.m3" level="info"/>
+    <logger name="org.eclipse.jetty.server" level="warn"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

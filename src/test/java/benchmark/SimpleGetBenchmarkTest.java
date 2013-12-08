@@ -28,7 +28,7 @@ public class SimpleGetBenchmarkTest {
 
     @Test
     public void createInstanceEveryTime() throws Exception {
-        final HttpServer server = new HttpServer(new GetMethodHandler());
+        final HttpServer server = new HttpServer(new GetMethodHandler(), 8888);
         try {
             Runnable runnable = getRunnable(server);
             new Thread(runnable).start();
@@ -87,7 +87,7 @@ public class SimpleGetBenchmarkTest {
 
     @Test
     public void reuseInstance() throws Exception {
-        final HttpServer server = new HttpServer(new GetMethodHandler());
+        final HttpServer server = new HttpServer(new GetMethodHandler(), 8888);
         try {
             Runnable runnable = getRunnable(server);
             new Thread(runnable).start();

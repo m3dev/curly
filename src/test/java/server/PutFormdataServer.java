@@ -18,6 +18,12 @@ import java.util.List;
 
 public class PutFormdataServer extends HttpServer {
 
+    private Integer port = 8888;
+
+    public PutFormdataServer(Integer port) {
+        this.port = port;
+    }
+
     ServletContextHandler handler = new ServletContextHandler();
 
     public static class FileuploadServlet extends HttpServlet {
@@ -61,7 +67,7 @@ public class PutFormdataServer extends HttpServer {
 
     public void start() throws Exception {
         handler.addServlet(new ServletHolder(new FileuploadServlet()), "/*");
-        server = new Server(8888);
+        server = new Server(this.port);
         server.setHandler(handler);
         server.start();
         server.join();

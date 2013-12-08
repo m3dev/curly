@@ -10,8 +10,8 @@ public class HttpServer {
     public HttpServer() {
     }
 
-    public HttpServer(Handler handler) {
-        server = new Server(8888);
+    public HttpServer(Handler handler, Integer port) {
+        server = new Server(port);
         server.setHandler(handler);
     }
 

@@ -306,6 +306,7 @@ public class HTTP {
         }
 
         HttpURLConnection conn = request.toHttpURLConnection(method);
+        conn.setRequestProperty("Connection", "close");
 
         if (request.getCharset() != null) {
             conn.setRequestProperty("Accept-Charset", request.getCharset());
@@ -320,6 +321,7 @@ public class HTTP {
                 if (request.getBytes() != null) {
                     conn.setDoOutput(true);
                     conn.setRequestProperty("Content-Type", request.getContentType());
+
                     OutputStream outputStream = conn.getOutputStream();
                     try {
                         outputStream.write(request.getBytes());
@@ -373,9 +375,6 @@ public class HTTP {
             response.setHeaderFields(conn.getHeaderFields());
             Map<String, String> headers = new HashMap<String, String>();
             for (String headerName : conn.getHeaderFields().keySet()) {
-                if (headerName != null && headerName.equals("Set-Cookie")) {
-                    continue;
-                }
                 headers.put(headerName, conn.getHeaderField(headerName));
             }
             response.setHeaders(headers);

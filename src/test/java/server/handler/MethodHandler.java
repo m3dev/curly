@@ -23,14 +23,18 @@ public abstract class MethodHandler extends AbstractHandler {
     public void _handle(Boolean isAllowed, Method method, Request baseRequest, HttpServletRequest request,
                         HttpServletResponse response) throws Exception {
         if (isAllowed) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/plain");
-            String toReturn = request.getParameter("toReturn");
-            if (toReturn != null) {
-                response.getWriter().print(toReturn);
+            if (request.getRequestURI().equals("/not_found")) {
+               response.setStatus(404);
             } else {
-                response.getWriter().print("おｋ");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/plain");
+                String toReturn = request.getParameter("toReturn");
+                if (toReturn != null) {
+                    response.getWriter().print(toReturn);
+                } else {
+                    response.getWriter().print("おｋ");
+                }
             }
         } else {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
