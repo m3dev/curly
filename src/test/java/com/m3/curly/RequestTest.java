@@ -110,4 +110,23 @@ public class RequestTest {
         assertThat(request.getContentType(), is(equalTo(contentType)));
     }
 
+    @Test
+    public void setUserAgent() throws Exception {
+        String url = "https://github.com/m3dev";
+        Request request = new Request(url);
+        request.setUserAgent("foo");
+        assertThat(request.getUserAgent(), is(equalTo("foo")));
+    }
+
+    @Test
+    public void overwriteUserAgentBySetHeader() throws Exception {
+        Request request = new Request("https://github.com/m3dev");
+        String ua = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3";
+        assertThat(request.getUserAgent(), is(not(equalTo(ua))));
+
+        // overwrite by setHeader
+        request.setHeader("User-Agent", ua);
+        assertThat(request.getUserAgent(), is(equalTo(ua)));
+    }
+
 }

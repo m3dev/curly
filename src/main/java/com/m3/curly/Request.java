@@ -83,7 +83,7 @@ public class Request {
         conn.setInstanceFollowRedirects(followRedirects);
 
         // HTTP header injection is checked by HttpURLConnection
-        conn.setRequestProperty("User-Agent", userAgent);
+        conn.setRequestProperty("User-Agent", getUserAgent());
         for (String headerKey : headers.keySet()) {
             conn.setRequestProperty(headerKey, headers.get(headerKey));
         }
@@ -146,7 +146,11 @@ public class Request {
     }
 
     public String getUserAgent() {
-        return userAgent;
+        if (headers.get("User-Agent") != null) {
+            return headers.get("User-Agent");
+        } else {
+            return userAgent;
+        }
     }
 
     public Request setUserAgent(String userAgent) {
