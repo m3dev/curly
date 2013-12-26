@@ -294,9 +294,9 @@ public class HTTP {
                     .append("- HTTP Request started. -\n")
                     .append(" " + method + " " + request.getUrl() + "\n")
                     .append(" Charset: " + request.getCharset() + "\n")
-                    .append(" ContentType: " + request.getContentType() + "\n")
+                    .append(" Content-Type: " + request.getContentType() + "\n")
                     .append(" Referer: " + request.getReferer() + "\n")
-                    .append(" UserAgent: " + request.getUserAgent() + "\n");
+                    .append(" User-Agent: " + request.getUserAgent() + "\n");
             for (String name : request.getHeaderNames()) {
                 requestInfo.append(" " + name + ": " + request.getHeader(name) + "\n");
             }
