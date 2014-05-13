@@ -18,6 +18,7 @@ package com.m3.curly;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Request body
@@ -55,19 +56,35 @@ public class RequestBody {
         return this;
     }
 
+    private void asApplicationXWwwFormUrlencoded_addParam(StringBuilder sb, String key, Object value) {
+        if (sb.length() > 0) {
+            sb.append("&");
+        }
+        sb.append(HTTP.urlEncode(key));
+        sb.append("=");
+        sb.append(HTTP.urlEncode(value.toString()));
+    }
+    
     public byte[] asApplicationXWwwFormUrlencoded() {
         Map<String, Object> formParams = request.getFormParams();
         StringBuilder sb = new StringBuilder();
         for (String key : request.getFormParams().keySet()) {
             Object value = formParams.get(key);
             if (value != null) {
-                sb.append(HTTP.urlEncode(key));
-                sb.append("=");
-                sb.append(HTTP.urlEncode(formParams.get(key).toString()));
+                if (value instanceof Object[]) {
+                    for (Object paramValue : (Object[])value) {
+                        asApplicationXWwwFormUrlencoded_addParam(sb, key, paramValue);
+                    }
+                } else if (value instanceof Iterable) {
+                    for (Object paramValue : (Iterable<Object>)value) {
+                        asApplicationXWwwFormUrlencoded_addParam(sb, key, paramValue);
+                    }
+                } else {
+                    asApplicationXWwwFormUrlencoded_addParam(sb, key, (Object)value);
+                }
             }
-            sb.append("&");
         }
-        return sb.toString().replaceFirst("&$", "").getBytes();
+        return sb.toString().getBytes();
     }
 
     public byte[] asMultipart(String boundary) throws IOException {

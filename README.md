@@ -79,6 +79,7 @@ The following code is an example of sending a POST request.
 Map<String, Object> formParams = new HashMap<String, Object>();
 formParams.put("name", "Andy");
 formParams.put("age", 20);
+formParams.put("multi", new String[] { "value1", "value2" }); // array or Iterable
 
 Response response = HTTP.post("http://example.com/register", formParams);
 // or HTTP.post(new Request("http://example.com/register", formParams));
