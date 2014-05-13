@@ -2,6 +2,10 @@ package com.m3.curly;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -34,6 +38,19 @@ public class RequestBodyTest {
         Request request = new Request("http://www.example.com/");
         RequestBody requestBody = new RequestBody(request);
         assertThat(requestBody.asApplicationXWwwFormUrlencoded(), is(notNullValue()));
+    }
+
+    @Test
+    public void asApplicationXWwwFormUrlencoded_multivalue$() throws Exception {
+        Request request = new Request("http://www.example.com/");
+    	Map<String, Object> paramMap = new HashMap<String, Object>();
+    	paramMap.put("single", "value1");
+    	paramMap.put("double", new String[] { "value2", "value3" });
+    	paramMap.put("double2", Arrays.asList(new String[] {"value4", "value5" }));
+    	request.setFormParams(paramMap);
+        RequestBody requestBody = new RequestBody(request);
+        assertThat(new String(requestBody.asApplicationXWwwFormUrlencoded())
+            , is("single=value1&double=value2&double=value3&double2=value4&double2=value5"));
     }
 
     @Test

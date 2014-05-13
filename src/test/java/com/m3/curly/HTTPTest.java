@@ -38,7 +38,7 @@ public class HTTPTest {
                 try {
                     _server.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.debug("Failed to invoke server because {}", e.getMessage(), e);
                 }
             }
         };
