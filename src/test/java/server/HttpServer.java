@@ -15,6 +15,10 @@ public class HttpServer {
         server.setHandler(handler);
     }
 
+    public boolean isRunning() {
+       return server.isRunning();
+    }
+
     public void start() throws Exception {
         server.start();
         server.join();

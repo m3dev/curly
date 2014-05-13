@@ -7,10 +7,14 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import server.HttpServer;
 import server.handler.GetMethodHandler;
 
 public class SimpleGetBenchmarkTest {
+
+    Logger logger = LoggerFactory.getLogger(SimpleGetBenchmarkTest.class);
 
     Runnable getRunnable(HttpServer server) {
         final HttpServer _server = server;
@@ -20,7 +24,7 @@ public class SimpleGetBenchmarkTest {
                 try {
                     _server.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.debug("Failed to invoke server because {}", e.getMessage(), e);
                 }
             }
         };
