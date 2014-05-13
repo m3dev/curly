@@ -2,6 +2,8 @@
 
 `Curly` is a pretty simple HTTP client as handy as `curl` command.
 
+[![Build Status](https://travis-ci.org/m3dev/curly.svg?branch=develop)](https://travis-ci.org/m3dev/curly)
+
 ## Getting Started
 
 ### Java via Maven
@@ -19,7 +21,7 @@
 ### Scala via xsbt
 
 ```scala
-libraryDependencies += "com.m3" %% "curly-scala" % "[0.5,)"
+libraryDependencies += "com.m3" %% "curly-scala" % "0.5.+"
 ```
 
 ### Groovy via Grape
