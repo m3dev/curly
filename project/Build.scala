@@ -3,15 +3,15 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.5.4"
+  val _version = "0.5.5"
 
-  lazy val libraryProject = Project(id = "library", base = file("."), settings = Defaults.defaultSettings ++ Seq(
+  lazy val libraryProject = Project(id = "library", base = file("."), settings = Seq(
     sbtPlugin := false,
     organization := "com.m3",
     name := "curly-scala",
     version := _version,
-    scalaVersion := "2.11.0",
-    crossScalaVersions := Seq("2.11.0", "2.10.0", "2.9.3"),
+    scalaVersion := "2.11.5",
+    crossScalaVersions := Seq("2.11.5", "2.10.4", "2.9.3"),
     resolvers := Seq(
       "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
       "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"
@@ -27,14 +27,14 @@ object AppBuild extends Build {
         Seq(
           "com.m3"             % "curly"              % _version           % "compile",
           "org.specs2"         % specs2 % (if (scalaVersion.startsWith("2.1")) "2.3.11" else "1.12.2") % "test",
-          "junit"              % "junit"              % "4.11"             % "test",
-          "commons-fileupload" % "commons-fileupload" % "1.3"              % "test",
+          "junit"              % "junit"              % "4.12"             % "test",
+          "commons-fileupload" % "commons-fileupload" % "1.3.1"            % "test",
           "commons-io"         % "commons-io"         % "2.4"              % "test",
           "org.hamcrest"       % "hamcrest-all"       % "1.3"              % "test",
           "commons-httpclient" % "commons-httpclient" % "3.1"              % "test",
-          "org.eclipse.jetty"  % "jetty-server"       % "8.1.14.v20131031" % "test",
-          "org.eclipse.jetty"  % "jetty-servlet"      % "8.1.14.v20131031" % "test",
-          "org.mockito"        % "mockito-all"        % "1.9.5"            % "test"
+          "org.eclipse.jetty"  % "jetty-server"       % "9.2.7.v20150116"  % "test",
+          "org.eclipse.jetty"  % "jetty-servlet"      % "9.2.7.v20150116"  % "test",
+          "org.mockito"        % "mockito-all"        % "1.10.19"          % "test"
         )
     },
     publishTo <<= version {
