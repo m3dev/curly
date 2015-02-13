@@ -65,7 +65,7 @@ public class Request {
     public HttpURLConnection toHttpURLConnection(Method method) throws IOException {
 
         // set additional query parameters
-        if (method.equals(Method.GET) && getQueryParams() != null && getQueryParams().size() > 0) {
+        if (getQueryParams() != null && getQueryParams().size() > 0) {
             for (QueryParam queryParam : getQueryParams()) {
                 if (queryParam != null && queryParam.getValue() != null) {
                     String name = queryParam.getName();
