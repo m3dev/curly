@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * HTTP
@@ -370,7 +372,7 @@ public class HTTP {
             }
 
             Response response = new Response();
-            response.setCharset(request.getCharset());
+            response.setCharset(getCharsetFromContentType(conn));
             response.setStatus(conn.getResponseCode());
             response.setHeaderFields(conn.getHeaderFields());
             Map<String, String> headers = new HashMap<String, String>();
@@ -449,4 +451,18 @@ public class HTTP {
         return futureTask;
     }
 
+    private static String getCharsetFromContentType(HttpURLConnection conn) {
+        Pattern pattern = Pattern.compile("charset=(.+)");
+        String contentType = conn.getHeaderField("Content-Type");
+
+        String detectedCharset = null;
+        if (contentType != null) {
+            Matcher matcher = pattern.matcher(contentType);
+            if (matcher.find()) {
+                detectedCharset = matcher.group(1);
+            }
+        }
+
+        return detectedCharset;
+    }
 }
