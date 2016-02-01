@@ -224,9 +224,8 @@ public class Request {
         return getRequestBody().getContentType();
     }
 
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getFormParams() {
-        return (Map<String, Object>) formParams;
+    public Map<String, ?> getFormParams() {
+        return formParams;
     }
 
     public Request setFormParams(Map<String, ?> formParams) {
@@ -234,9 +233,8 @@ public class Request {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<FormData> getMultipartFormData() {
-        return (List<FormData>) multipartFormData;
+    public List<? extends FormData> getMultipartFormData() {
+        return multipartFormData;
     }
 
     public Request setMultipartFormData(List<? extends FormData> multipartFormData) {
