@@ -45,8 +45,8 @@ public class Request {
     private Map<String, String> headers = new HashMap<String, String>();
     private List<QueryParam> queryParams = new ArrayList<QueryParam>();
     private RequestBody requestBody = new RequestBody(this);
-    private Map<String, Object> formParams = new HashMap<String, Object>();
-    private List<FormData> multipartFormData = new ArrayList<FormData>();
+    private Map<String, ?> formParams = new HashMap<String, Object>();
+    private List<? extends FormData> multipartFormData = new ArrayList<FormData>();
 
     public Request(String url) {
         setUrl(url);
@@ -57,7 +57,7 @@ public class Request {
         setCharset(charset);
     }
 
-    public Request(String url, Map<String, Object> formParams) {
+    public Request(String url, Map<String, ?> formParams) {
         setUrl(url);
         setFormParams(formParams);
     }
@@ -224,20 +224,22 @@ public class Request {
         return getRequestBody().getContentType();
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getFormParams() {
-        return formParams;
+        return (Map<String, Object>) formParams;
     }
 
-    public Request setFormParams(Map<String, Object> formParams) {
+    public Request setFormParams(Map<String, ?> formParams) {
         this.formParams = formParams;
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public List<FormData> getMultipartFormData() {
-        return multipartFormData;
+        return (List<FormData>) multipartFormData;
     }
 
-    public Request setMultipartFormData(List<FormData> multipartFormData) {
+    public Request setMultipartFormData(List<? extends FormData> multipartFormData) {
         this.multipartFormData = multipartFormData;
         return this;
     }
