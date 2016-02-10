@@ -66,7 +66,7 @@ public class RequestBody {
     }
     
     public byte[] asApplicationXWwwFormUrlencoded() {
-        Map<String, Object> formParams = request.getFormParams();
+        Map<String, ?> formParams = request.getFormParams();
         StringBuilder sb = new StringBuilder();
         for (String key : request.getFormParams().keySet()) {
             Object value = formParams.get(key);
@@ -76,7 +76,7 @@ public class RequestBody {
                         asApplicationXWwwFormUrlencoded_addParam(sb, key, paramValue);
                     }
                 } else if (value instanceof Iterable) {
-                    for (Object paramValue : (Iterable<Object>)value) {
+                    for (Object paramValue : (Iterable<?>)value) {
                         asApplicationXWwwFormUrlencoded_addParam(sb, key, paramValue);
                     }
                 } else {

@@ -38,7 +38,7 @@ public class AsyncRequest extends Request {
         super(url, charset);
     }
 
-    public AsyncRequest(String url, Map<String, Object> formParams) {
+    public AsyncRequest(String url, Map<String, ?> formParams) {
         super(url, formParams);
     }
 

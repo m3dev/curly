@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * HTTP
@@ -95,21 +97,21 @@ public class HTTP {
         }));
     }
 
-    public static Response post(String url, Map<String, Object> formParams) throws IOException {
+    public static Response post(String url, Map<String, ?> formParams) throws IOException {
         return post(new Request(url, formParams));
     }
 
-    public static Future<Response> asyncPost(String url, Map<String, Object> formParams) {
+    public static Future<Response> asyncPost(String url, Map<String, ?> formParams) {
         return asyncPost(new AsyncRequest(url, formParams));
     }
 
-    public static Response post(String url, List<FormData> multipartFormData) throws IOException {
+    public static Response post(String url, List<? extends FormData> multipartFormData) throws IOException {
         Request request = new Request(url);
         request.setMultipartFormData(multipartFormData);
         return post(request);
     }
 
-    public static Future<Response> asyncPost(String url, List<FormData> multipartFormData) {
+    public static Future<Response> asyncPost(String url, List<? extends FormData> multipartFormData) {
         AsyncRequest request = new AsyncRequest(url);
         request.setMultipartFormData(multipartFormData);
         return asyncPost(request);
@@ -146,21 +148,21 @@ public class HTTP {
         }));
     }
 
-    public static Response put(String url, Map<String, Object> formParams) throws IOException {
+    public static Response put(String url, Map<String, ?> formParams) throws IOException {
         return put(new Request(url, formParams));
     }
 
-    public static Future<Response> asyncPut(String url, Map<String, Object> formParams) {
+    public static Future<Response> asyncPut(String url, Map<String, ?> formParams) {
         return asyncPut(new AsyncRequest(url, formParams));
     }
 
-    public static Response put(String url, List<FormData> multipartFormData) throws IOException {
+    public static Response put(String url, List<? extends FormData> multipartFormData) throws IOException {
         Request request = new Request(url);
         request.setMultipartFormData(multipartFormData);
         return put(request);
     }
 
-    public static Future<Response> asyncPut(String url, List<FormData> multipartFormData) {
+    public static Future<Response> asyncPut(String url, List<? extends FormData> multipartFormData) {
         AsyncRequest request = new AsyncRequest(url);
         request.setMultipartFormData(multipartFormData);
         return asyncPut(request);
@@ -370,7 +372,7 @@ public class HTTP {
             }
 
             Response response = new Response();
-            response.setCharset(request.getCharset());
+            response.setCharset(getCharsetFromContentType(conn));
             response.setStatus(conn.getResponseCode());
             response.setHeaderFields(conn.getHeaderFields());
             Map<String, String> headers = new HashMap<String, String>();
@@ -449,4 +451,18 @@ public class HTTP {
         return futureTask;
     }
 
+    private static String getCharsetFromContentType(HttpURLConnection conn) {
+        Pattern pattern = Pattern.compile("charset=(.+)");
+        String contentType = conn.getHeaderField("Content-Type");
+
+        String detectedCharset = null;
+        if (contentType != null) {
+            Matcher matcher = pattern.matcher(contentType);
+            if (matcher.find()) {
+                detectedCharset = matcher.group(1);
+            }
+        }
+
+        return detectedCharset;
+    }
 }

@@ -3,18 +3,18 @@ import Keys._
 
 object AppBuild extends Build {
 
-  val _version = "0.5.5"
+  val _version = "0.5.6"
 
   lazy val libraryProject = Project(id = "library", base = file("."), settings = Seq(
     sbtPlugin := false,
     organization := "com.m3",
     name := "curly-scala",
     version := _version,
-    scalaVersion := "2.11.5",
-    crossScalaVersions := Seq("2.11.5", "2.10.4", "2.9.3"),
+    scalaVersion := "2.11.7",
+    crossScalaVersions := Seq("2.11.7", "2.10.6", "2.9.3"),
     resolvers := Seq(
-      "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
-      "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"
+      "sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
+      "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
     ),
     libraryDependencies <++= (scalaVersion) {
       scalaVersion =>
@@ -32,8 +32,8 @@ object AppBuild extends Build {
           "commons-io"         % "commons-io"         % "2.4"              % "test",
           "org.hamcrest"       % "hamcrest-all"       % "1.3"              % "test",
           "commons-httpclient" % "commons-httpclient" % "3.1"              % "test",
-          "org.eclipse.jetty"  % "jetty-server"       % "9.2.7.v20150116"  % "test",
-          "org.eclipse.jetty"  % "jetty-servlet"      % "9.2.7.v20150116"  % "test",
+          "org.eclipse.jetty"  % "jetty-server"       % "9.2.14.v20151106" % "test",
+          "org.eclipse.jetty"  % "jetty-servlet"      % "9.2.14.v20151106" % "test",
           "org.mockito"        % "mockito-all"        % "1.10.19"          % "test"
         )
     },

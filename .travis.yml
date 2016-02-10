@@ -2,7 +2,7 @@ language: scala
 sudo: false
 scala:
   - 2.9.3
-  - 2.10.4
-  - 2.11.5
+  - 2.10.6
+  - 2.11.7
 script: "mvn test && sbt ++$TRAVIS_SCALA_VERSION test"
 
