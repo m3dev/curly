@@ -34,6 +34,7 @@ case class FormData(name: String, bytes: Array[Byte] = null, text: TextInput = N
       setFile(file.file)
       setContentType(file.contentType)
     }
+    case _ =>
   }
 
   def name(name: String): Unit = setName(name)

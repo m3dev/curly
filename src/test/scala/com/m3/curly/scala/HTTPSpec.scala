@@ -13,8 +13,6 @@ class HTTPSpec extends Specification {
 
   sequential
 
-  override def intToRichLong(v: Int) = super.intToRichLong(v)
-
   "HTTP" should {
 
     // --------
